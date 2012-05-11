@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Timeline</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.27.2"></script>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js?1.27.2"></script>
+ 
+  <%= csrf_meta_tags %>
+  <%= raw wymeditor_initialize %>
+</head>
+<body>
+
+<h1>Online Web Page Editor</h1>
+<div id='message'></div>
+<%= yield %>
+
+</body>
+</html>

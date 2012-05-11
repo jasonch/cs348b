@@ -1,0 +1,3 @@
+console.log("commit.js <%= yield :notice %>");
+$('#message').html("<%= yield :notice %>");
+setTimeout(function() { $('#message').html(""); }, 2000);
