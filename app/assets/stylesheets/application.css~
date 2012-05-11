@@ -10,5 +10,11 @@
  *
  *= require_self
  *= require_tree .
- *= require vendor
 */
+
+#thumbnail {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 100;
+}

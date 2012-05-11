@@ -11,3 +11,8 @@
  *= require_self
  *= require_tree .
 */
+
+#thumbnail {
+  position: absolute;
+  z-index: 100;
+}

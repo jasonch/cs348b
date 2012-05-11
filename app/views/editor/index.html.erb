@@ -11,5 +11,8 @@
         <%= label_tag "title", "Title:" %>
         <%= text_field_tag "title", title %>
         <%= text_area_tag "body", body, :class=> 'wymeditor'  %>
+        <div>
         <%= submit_tag "commit", :disable_with => "saving..."  %>
+        <span style="text-align: right"><%= link_to "Timeline", :action => "viewTree" %></span>
+        </div>
 <% end %>

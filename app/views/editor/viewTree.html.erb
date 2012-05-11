@@ -1,3 +1,4 @@
+<div id="thumbnail"></div>
 <div id="chart"></div>
 <script type="text/javascript" language='javascript'>
         
@@ -31,7 +32,6 @@ function update(source) {
 
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse();
- console.log(nodes)
   // Update the nodes
   	var node = vis.selectAll("g.node")
       .data(nodes, function(d) { return d.id || (d.id = ++i); });
@@ -142,15 +142,25 @@ function update(source) {
   });
 }
 
+function showThumbnail(d) {
+        $('#thumbnail').offset({ top: d.x, left: d.y});
+        console.log(d);
+  console.log("top: " + d.y + " left: " + d.x);
+  $('#thumbnail').html(d.body).show();
+}
+
 // Toggle children on click.
 function click(d) {
+  showThumbnail(d);
+  /*  
   if (d.children) {
     d._children = d.children;
     d.children = null;
   } else {
     d.children = d._children;
     d._children = null;
-  }
+    }
+    */
   update(d);
 }
 
