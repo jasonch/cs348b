@@ -1,9 +1,19 @@
+require 'base64'
+
 class EditorController < ApplicationController
   respond_to :html, :js
-  @notice
 
   def index
-    if (!session[:curRev].nil?)
+    if (params[:id])
+            if (params[:id] == 0)
+                    session[:curRev] = nil;
+                    @revision = nil;
+            else 
+              session[:curRev] = params[:id]
+            end
+    end
+
+    if (!session[:curRev].nil? && session[:curRev] != "0")
             @revision = Revision.find(session[:curRev])
             logger.debug "Session curRev: #{session[:curRev]}"
     else
@@ -13,47 +23,49 @@ class EditorController < ApplicationController
   end
 
   def commit
-    if (!session[:curRev].nil?) 
-            @revision = Revision.find(session[:curRev])
-    end
 
-    # check if no changes made
-    if (@revision && params[:body] == @revision.body && params[:title] == @revision.title)
-      @notice = 'No change was made'
+    # check input
+    if (params[:title].nil? || params[:title] == "" || params[:filepath].nil?) 
+      flash[:error] = "Error while commiting."
       respond_to do |format| 
-        format.html { redirect_to 'index', :notice => 'No change made' }
-      end
+            format.js { render :layout => false }
+      end 
       return
     end
 
-    # check for empty revisions
-    if (params[:title] == "" or params[:body] == "")
-            @notice = 'No data'
-            respond_to do |format|
-                    format.html { redirect_to 'index', :notice => 'No data' }
-            end
-            return
+    if (!session[:curRev].nil?) 
+            @revision = Revision.find(session[:curRev])
     end
+    
+    filepath = params[:filepath]
 
-    # create new revision
-    revision = Revision.new
-    revision.body = params[:body]
-    revision.title = params[:title]
-    # if this revision would be a child revision
-    if (defined? @revision)
-            revision.revision_id = @revision.id
+    # create the new revision
+    rev = Revision.new
+    rev.title = params[:title]
+    rev.body = ""
+    if (@revision)
+      rev.revision_id = @revision.id
     end
-    revision.save()
-    @revision = revision
-    session[:curRev] = @revision.id
+    rev.save
 
-    @notice = 'Commit saved'
+    # save again here because we don't know the rev id until it's saved first
+    fullpath = "/images/" + params[:title] + "-" + rev.id.to_s + ".png"
+    File.open("public" + fullpath, "wb") do |f| 
+            f.write(Base64.decode64(filepath))
+    end
+    rev.filepath = fullpath
+    rev.save
+   
+    # update current revision
+    session[:curRev] = rev.id
+    @revision = rev 
+
+    flash[:message] = "Commit successful"
     respond_to do |format| 
-        format.html { redirect_to 'index', :notice => "Committed" } 
-        format.js { render :layout => false } 
-    end
-  end
+            format.js { render :layout => false }
+    end 
 
+  end
 
   def viewTree 
 
@@ -62,7 +74,7 @@ class EditorController < ApplicationController
   def getJSONTree 
     @json = {:name => "Root", :children => []}
     # find all the top-level revisoins, then get their children
-    Revision.where("revision_id IS NOT NULL").each do |rev|
+    Revision.where("revision_id IS NULL").each do |rev|
       @json[:children] << revisionToJSON(rev)
     end
 
@@ -78,7 +90,7 @@ class EditorController < ApplicationController
   ### Private methods ###
   private 
   def revisionToJSON(rev) 
-    el = {:name => rev.title, :body => rev.body, :id => rev.id, :children => []}
+    el = {:name => rev.title, :body => rev.body, :filepath => rev.filepath, :id => rev.id, :children => []}
     rev.revisions.each do |r|
       el[:children] << revisionToJSON(r)
     end

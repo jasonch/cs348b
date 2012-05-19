@@ -1,14 +1,82 @@
 <% if @revision.nil? then 
-      body="" 
       title=""
    else 
-      body = @revision.body 
       title = @revision.title
    end 
 %>
+
+  <script type='text/javascript'>
+    var EMPTYFUNC = function(){};
+    var EditorStates = {};
+    $("body").ready(function () {
+      //addScribble();
+      //drawSomething();
+      EditorStates.context = $('#myCanvas')[0].getContext("2d");
+      EditorStates.options = [
+        { name: "New",
+          onclick: function() { 
+            window.location.href = "<%= url_for :only_path => false, :action => 'index', :id => 0 %>";
+          }
+        },
+        { name: "Scribble",
+          onclick: function() { changeTool("Scribble")},
+          mousedown: startScribble,
+          mousemove: drawScribble,
+          mouseup: finishScribble
+        },
+        { name: "Color",
+          onclick: function () {
+
+            
+          }
+        },
+        { name: "Line Width",
+          onclick: setLineWidth
+        },
+        { name: "Ellipse", 
+          onclick: function() {changeTool("Ellipse"); },
+          mousedown: EMPTYFUNC,
+          mousemove: EMPTYFUNC,
+          mouseup: EMPTYFUNC
+
+        },
+        { name: "Image",
+          onclick: EMPTYFUNC 
+        },
+        { name: "Undo",
+          onclick: undo
+        },
+        { name: "Clear",
+          onclick: clearCanvas
+        }];
+        initCanvasEvents();
+        // load current image
+        <% if @revision %>
+        var image = new Image();
+        image.onload = function () {
+            console.log("image loaded");
+            $('#myCanvas')[0].getContext("2d").drawImage(image, 0, 0);
+        };
+        image.src = window.location.origin + "<%= @revision.filepath %>";
+        <% end %>
+        $('.option_Color').ColorPicker({
+          color: '#0000ff',
+          onSubmit: function (hsb, hex, rgb, el) {
+            $(el).val(hex);
+            $('#myCanvas')[0].getContext("2d").strokeStyle = hex;
+            EditorStates.stroke = hex;
+          },
+          onBeforeShow: function () { if(this.value != undefined) $(this).ColorPickerSetColor(this.value); }
+        });
+    });
+  </script>
+
+
+
+  <label for='revTitle'>Title: </label><input type='text' name='title' id='revTitle' value='<%= title %>'/>
 <div id='optionsPane'>
 </div>
 <canvas id='myCanvas' width='800' height='600'> </canvas>
 <div class='actionPane'>
-        <a href='#'>Commit</a> <a href='#'>View Timeline</a>
+        <a href='#' onclick='commit()'>Commit</a> <%= link_to "Timeline", :action => 'viewTree' %>
 </div>

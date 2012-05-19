@@ -1,3 +1,6 @@
-console.log("commit.js <%= yield :notice %>");
-$('#message').html("<%= yield :notice %>");
+<% if flash[:error].nil? %>
+       $('#message').html("<%= flash[:message] %>");
+<% else %>
+        $('#message').html("<%= flash[:error] %>");
+<% end %>
 setTimeout(function() { $('#message').html(""); }, 2000);

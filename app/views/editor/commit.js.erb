@@ -1,3 +1,6 @@
-console.log("commit.js <%= @notice %>");
-$('#message').html("<%= @notice %>");
-setTimeout(function() { $('#message').html(""); }, 2000);
+<% if flash[:error].nil? %>
+       $('#message').html("<%= flash[:message] %>");
+<% else %>
+        $('#message').html("<%= flash[:error] %>");
+<% end %>
+setTimeout(function() { $('#message').html(""); }, 5000);

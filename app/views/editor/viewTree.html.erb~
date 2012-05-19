@@ -2,15 +2,17 @@
 <script type="text/javascript" language='javascript'>
         
 var radius = 10;
+var thumbwidth = 180;
+var thumbheight= 120;
 
-var w = 960,
-    h = 900,
+var w = 1024,
+    h = 768,
     i = 0,
     duration = 500,
     root;
 
 var tree = d3.layout.tree()
-    .size([h, w - 160]);
+    .size([h, w - thumbwidth*2]);
 
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
@@ -41,43 +43,43 @@ function update(source) {
     	//.style("opacity", 1e-6);
 
 
-  // Enter any new nodes at the parent's previous position.
-  	nodeEnter.append("svg:circle")
-      //.attr("class", "node")
-      //.attr("cx", function(d) { return source.x0; })
-      //.attr("cy", function(d) { return source.y0; })
-      .attr("r", radius)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
-      .on("click", click);
-	
+      // Enter any new nodes at the parent's previous position.
+  console.log(nodeEnter);
+  nodeEnter.append("svg:rect")
+          .attr('y', -1*thumbheight/2)
+          .attr('width', thumbwidth)
+          .attr('height', thumbheight)
+          .attr('fill', 'white')
+          .attr('stroke', 'black')
+          .attr('stroke-width', 5);
+  nodeEnter.append("svg:image")
+          .attr('y', -1*thumbheight/2) 
+          .attr('width', thumbwidth)
+          .attr('height', thumbheight)
+          .attr('xlink:href', function(d) { return d.filepath })
+          .style('fill', 'black')
+          .on("click", click);
 	nodeEnter.append("svg:text")
-      	.attr("x", function(d) { return d._children ? -8 : 8; })
-		.attr("y", 3)
-      	//.attr("fill","#ccc")
-      	//.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+    		.attr("y", -1*thumbheight/2 - 5)
       	.text(function(d) { return d.name; });
 
   // Transition nodes to their new position.
 	nodeEnter.transition()
 		.duration(duration)
 		.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-      	.style("opacity", 1)
-      .select("circle")
-    	//.attr("cx", function(d) { return d.x; })
-		//.attr("cy", function(d) { return d.y; })
-        .style("fill", "lightsteelblue");
+    .style("opacity", 1);
       
-    node.transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-      .style("opacity", 1);
+  node.transition()
+    .duration(duration)
+    .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+    .style("opacity", 1);
     
 
 	node.exit().transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-      .style("opacity", 1e-6)
-      .remove();
+    .duration(duration)
+    .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+    .style("opacity", 1e-6)
+    .remove();
 
   // Update the links
   var link = vis.selectAll("path.link")
@@ -127,33 +129,11 @@ function showThumbnail(d) {
 
 // Toggle children on click.
 function click(d) {
-  /*  
-  if (d.children) {
-    d._children = d.children;
-    d.children = null;
-  } else {
-    d.children = d._children;
-    d._children = null;
-    }
-    */
-   update(d);
-}
-function drawThumbnails(nodes) {
-        
-  nodes.forEach(function(d) {
+   if (d.name == "Root") return;
+   window.location.href = "<%= url_for :action => 'index', :only_path => false %>" + "/" + d.id;
 
-    if (d.depth == 0) return; // don't do it for root
-    var thumb = $('<div></div>')
-      .addClass('thumbnail')
-      .html(d.body);
-      $('body').append(thumb);
-      var thumbscale = (100/thumb.width());
-      thumb.css('transform', "scale(" + thumbscale + "," + thumbscale + ")");
-      if (d.children.length > 0)
-        thumb.offset({top: d.x, left: d.y-40});
-      else 
-        thumb.offset({top: d.x - 250, left: d.y-250});
-    });
+
+   //update(d);
 }
 
 d3.select(self.frameElement).style("height", "2000px");

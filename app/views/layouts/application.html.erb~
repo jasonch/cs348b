@@ -7,42 +7,11 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <script type='text/javascript' src='http://d3js.org/d3.v2.js'></script>
+  <script type='text/javascript' src='js/colorpicker.js'></script>
  
   <%= csrf_meta_tags %>
   <%= raw wymeditor_initialize %>
-  <script type='text/javascript'>
-    var EMPTYFUNC = function(){};
-    var EditorStates = {};
-    $("body").ready(function () {
-      //addScribble();
-      drawSomething();
-      EditorStates.context = $('#myCanvas')[0].getContext("2d");
-      EditorStates.options = [
-        { name: "Scribble",
-          onclick: function() { changeTool("Scribble")},
-          mousedown: startScribble,
-          mousemove: drawScribble,
-          mouseup: finishScribble
-        }, 
-        { name: "Ellipse", 
-          onclick: function() {changeTool("Ellipse"); },
-          mousedown: EMPTYFUNC,
-          mousemove: EMPTYFUNC,
-          mouseup: EMPTYFUNC
 
-        },
-        { name: "Image",
-          onclick: EMPTYFUNC 
-        },
-        { name: "Undo",
-          onclick: undo
-        },
-        { name: "Clear",
-          onclick: clearCanvas
-        }];
-      initCanvasEvents();
-    });
-  </script>
 </head>
 <body>
 
