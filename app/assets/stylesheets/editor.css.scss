@@ -1,3 +1,18 @@
 // Place all the styles related to the editor controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.scribble a {
+  background-image: url(../wymeditor/skins/default/icons.png);
+
+}
+
+.lightbox {
+  z-index: 1000;
+  border: blue solid 5px;
+  min-width: 200px;
+}
+
+#myCanvas {
+  border: 1px black solid;
+}

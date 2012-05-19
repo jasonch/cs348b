@@ -55,6 +55,7 @@ class EditorController < ApplicationController
   end
 
 
+
   def viewTree 
 
   end
@@ -78,7 +79,7 @@ class EditorController < ApplicationController
   ### Private methods ###
   private 
   def revisionToJSON(rev) 
-    el = {:name => rev.title, :body => rev.body, :children => []}
+    el = {:name => rev.title, :body => rev.body, :id => rev.id, :children => []}
     rev.revisions.each do |r|
       el[:children] << revisionToJSON(r)
     end

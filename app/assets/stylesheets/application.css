@@ -15,4 +15,17 @@
 #thumbnail {
   position: absolute;
   z-index: 100;
+  background: white;
+  padding: 10px;
+  border: 1px solid black;
+  display: none;
+}
+
+.thumbnail {
+  position: absolute;
+  z-index: 100;
+  background: white;
+  padding: 10px;
+  min-width: 100px;
+  border: 1px solid black;
 }

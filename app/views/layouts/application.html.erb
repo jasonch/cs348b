@@ -10,6 +10,42 @@
  
   <%= csrf_meta_tags %>
   <%= raw wymeditor_initialize %>
+  <script type='text/javascript'>
+    var EMPTYFUNC = function(){};
+    var EditorStates = {};
+    $("body").ready(function () {
+      //addScribble();
+      drawSomething();
+      EditorStates.context = $('#myCanvas')[0].getContext("2d");
+      EditorStates.options = [
+        { name: "Scribble",
+          onclick: function() { changeTool("Scribble")},
+          mousedown: startScribble,
+          mousemove: drawScribble,
+          mouseup: finishScribble
+        },
+        { name: "Line Width",
+          onclick: setLineWidth
+        },
+        { name: "Ellipse", 
+          onclick: function() {changeTool("Ellipse"); },
+          mousedown: EMPTYFUNC,
+          mousemove: EMPTYFUNC,
+          mouseup: EMPTYFUNC
+
+        },
+        { name: "Image",
+          onclick: EMPTYFUNC 
+        },
+        { name: "Undo",
+          onclick: undo
+        },
+        { name: "Clear",
+          onclick: clearCanvas
+        }];
+      initCanvasEvents();
+    });
+  </script>
 </head>
 <body>
 
