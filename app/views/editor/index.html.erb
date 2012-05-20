@@ -11,42 +11,47 @@
     $("body").ready(function () {
       //addScribble();
       //drawSomething();
-      EditorStates.context = $('#myCanvas')[0].getContext("2d");
+      EditorStates.context = myCanvasContext(); 
       EditorStates.options = [
-        { name: "New",
+        { name: "new",
+          title: "New",
           onclick: function() { 
             window.location.href = "<%= url_for :only_path => false, :action => 'index', :id => 0 %>";
           }
         },
-        { name: "Scribble",
-          onclick: function() { changeTool("Scribble")},
+        { name: "color",
+          title: "Color",
+          onclick: EMPTYFUNC 
+        },
+        { name: "thickness",
+          title: "Line Width",
+          onclick: showLineWidthBox
+        },
+        { name: "scribble",
+          title: "Scribble",
+          onclick: function() { changeTool("scribble")},
           mousedown: startScribble,
           mousemove: drawScribble,
           mouseup: finishScribble
         },
-        { name: "Color",
-          onclick: function () {
-
-            
-          }
-        },
-        { name: "Line Width",
-          onclick: setLineWidth
-        },
-        { name: "Ellipse", 
-          onclick: function() {changeTool("Ellipse"); },
+        { name: "ellipse",
+          title: "Ellipse",
+          onclick: function() {changeTool("ellipse"); },
           mousedown: EMPTYFUNC,
           mousemove: EMPTYFUNC,
           mouseup: EMPTYFUNC
 
         },
-        { name: "Image",
-          onclick: EMPTYFUNC 
+        { name: "image",
+          title: "Image",
+          onclick: showImageURLBox 
         },
-        { name: "Undo",
+        { name: "undo",
+          title: "Undo",
           onclick: undo
         },
-        { name: "Clear",
+        { name: "clear",
+          title: "Clear Canvas",
           onclick: clearCanvas
         }];
         initCanvasEvents();
@@ -55,15 +60,15 @@
         var image = new Image();
         image.onload = function () {
             console.log("image loaded");
-            $('#myCanvas')[0].getContext("2d").drawImage(image, 0, 0);
+            myCanvasContext().drawImage(image, 0, 0);
         };
         image.src = window.location.origin + "<%= @revision.filepath %>";
         <% end %>
-        $('.option_Color').ColorPicker({
+        $('.option_color').ColorPicker({
           color: '#0000ff',
           onSubmit: function (hsb, hex, rgb, el) {
             $(el).val(hex);
-            $('#myCanvas')[0].getContext("2d").strokeStyle = hex;
+            myCanvasContext().strokeStyle = hex;
             EditorStates.stroke = hex;
           },
           onBeforeShow: function () { if(this.value != undefined) $(this).ColorPickerSetColor(this.value); }
@@ -71,12 +76,11 @@
     });
   </script>
 
-
-
-  <label for='revTitle'>Title: </label><input type='text' name='title' id='revTitle' value='<%= title %>'/>
+  <%= label_tag "revTitle", "Title: "%> <%= text_field_tag "revTitle", title %>
 <div id='optionsPane'>
 </div>
 <canvas id='myCanvas' width='800' height='600'> </canvas>
+<canvas id='backCanvas' width='800' height='600'> </canvas>
 <div class='actionPane'>
-        <a href='#' onclick='commit()'>Commit</a> <%= link_to "Timeline", :action => 'viewTree' %>
+        <%= link_to_function "Commit", 'commit();' %> <%= link_to "Timeline", :action => 'viewTree' %>
 </div>

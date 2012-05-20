@@ -8,11 +8,25 @@
 }
 
 .lightbox {
-  z-index: 1000;
-  border: blue solid 5px;
+  position: absolute;
+  border: blue solid 2px;
   min-width: 200px;
+  background: white;
+}
+
+#optionsPane a {
+  padding: 0px 5px;
+}
+
+#optionsPane a.selected {
+  background: #ffff88;
 }
 
 #myCanvas {
   border: 1px black solid;
+}
+
+
+#backCanvas {
+  display: none;
 }

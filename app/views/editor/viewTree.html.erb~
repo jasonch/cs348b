@@ -131,8 +131,6 @@ function showThumbnail(d) {
 function click(d) {
    if (d.name == "Root") return;
    window.location.href = "<%= url_for :action => 'index', :only_path => false %>" + "/" + d.id;
-
-
    //update(d);
 }
 

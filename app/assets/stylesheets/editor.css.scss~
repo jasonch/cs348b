@@ -7,12 +7,30 @@
 
 }
 
-#lightbox {
-  z-index: 1000;
-  border: #0055ff solid 5px;
+.lightbox {
+  position: absolute;
+  border: blue solid 2px;
   min-width: 200px;
+  background: white;
+}
+
+#optionsPane a {
+  padding: 0px 5px;
+}
+
+#optionsPane a.selected {
+  background: #ffff88;
+}
+
+#toolbox {
+  display: inline-block;
 }
 
 #myCanvas {
   border: 1px black solid;
+}
+
+
+#backCanvas {
+  display: none;
 }

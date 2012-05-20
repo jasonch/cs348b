@@ -1,11 +1,18 @@
-
-function setLineWidth() {
-  var input = "<div class='lightbox'><label for='linewidth'>Line Width:</label><input type='text' id='linewidth' size='1'/></div>";
-  $('body').append(input);
-  EditorStates.lineWidth = 5;
+function myCanvas() {
+  return $('#myCanvas')[0];
 }
 
-  function addScribble() {
+function myCanvasContext() {
+  return $('#myCanvas')[0].getContext("2d");
+
+}
+
+function backCanvasContext() {
+  return $('#backCanvas')[0].getContext("2d");
+}
+
+
+function addScribble() {
         $('.wymeditor').wymeditor({
           postInit: function(wym) {
             var button = "<li class='wym_tools_scribble'><a name='scribbleBotton' href='#'>&nbsp;</a></li>";
@@ -19,16 +26,21 @@ function setLineWidth() {
             });
           }
         });
-     };
+};
+
+
 function undo() {
   console.log("undo");
+  clearCanvas();
+  myCanvasContext().drawImage($('#backCanvas')[0], 0, 0);
+
 }
 
 function clearCanvas() {
-  EditorStates.context.clearRect(0,0, 800,600);
+  myCanvasContext().clearRect(0,0, 800,600);
   $('#myCanvas')[0].width = $('#myCanvas')[0].width;
-  EditorStates.context.strokeStyle = "#0000ff";
-  EditorStates.context.strokeWidth = EditorStates.context.lineWidth;
+  myCanvasContext().lineWidth = EditorStates.strokeWidth; 
+  myCanvasContext().strokeStyle = EditorStates.stroke; 
 }
 
 function changeTool(tool) {
@@ -39,7 +51,9 @@ function changeTool(tool) {
       break;
     }
   }
- 
+  $('#optionsPane a').removeClass('selected');
+  $('.option_'+tool).addClass('selected');
+
   $('#myCanvas').unbind('mousedown');
   $('#myCanvas').unbind('mousemove');
   $('#myCanvas').unbind('mouseup');
@@ -59,14 +73,15 @@ function changeTool(tool) {
 }
 
   function startScribble(event) {
+    backCanvasContext().drawImage($('#myCanvas')[0], 0, 0);
     console.log(event.offsetX + ", " + event.offsetY);
-    EditorStates.context.beginPath();
-    EditorStates.context.moveTo(event.offsetX, event.offsetY);
+    myCanvasContext().beginPath();
+    myCanvasContext().moveTo(event.offsetX, event.offsetY);
 
   }
   function drawScribble(event) {
     console.log(event.X);
-    var context = EditorStates.context; 
+    var context = myCanvasContext(); 
     context.lineTo(event.offsetX, event.offsetY); 
     context.stroke();
 
@@ -81,7 +96,7 @@ function changeTool(tool) {
       var option = EditorStates.options[i];
       console.log(option);
 
-      var link = "<a href='#' class='option_" + option.name + "'>" + option.name + "</a>";
+      var link = "<a href='#' class='option_" + option.name + "'>" + option.title + "</a>";
 
       $('#optionsPane').append(link);
       $('#optionsPane').find("a.option_"+option.name).click(option.onclick);
@@ -129,4 +144,46 @@ function commit() {
 
   });
 
+}
+
+
+function showImageURLBox(event) {
+  $('#imageUrlBox').remove();
+  var box = "<div class='lightbox' id='imageUrlBox'></div>";
+  var label = "<label for='imageUrlInput'>Link: </label>";
+  var input = "<input type='text' id='imageUrlInput'></input>";
+  var submit = "<input type='button' value='Add' id='imageUrlSubmit'></input>";
+
+
+  $('body').append($(box));
+  $("#imageUrlBox").offset({top: event.clientY + 10, left: event.clientX})
+        .append(label);
+  $("#imageUrlBox").append(input).focus();
+  $("#imageUrlBox").append(submit)
+  $("#imageUrlSubmit").click(function() { 
+          alert('submitted'); 
+          $('#imageUrlBox').remove();
+  });
+
+}
+
+function showLineWidthBox (event) {
+  $('#lineWidthBox').remove();
+  var box = "<div class='lightbox' id='lineWidthBox'></div>";
+  var label = "<label for='lineWidthInput'>Width: </label>";
+  var input = "<input type='text' id='lineWidthInput' value="+myCanvasContext().lineWidth+"></input>";
+
+  $('body').append($(box));
+
+  $('#lineWidthBox').offset({top: event.clientY+10, left: event.clientX })
+          .append(label);
+  $('#lineWidthBox').append(input);
+
+  $('#lineWidthInput').focus();
+
+  $('#lineWidthInput').blur(function() { 
+         myCanvasContext().lineWidth = $('#lineWidthInput').val();
+         EditorStates.strokeWidth = myCanvasContext().lineWidth;
+         $('#lineWidthBox').remove();
+ });
 }

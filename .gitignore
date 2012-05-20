@@ -13,3 +13,11 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+
+# Ignore vim hidden files
+.*.swp
+*~
+
+# Ignore user saved image files
+/public/images/*.png
+
