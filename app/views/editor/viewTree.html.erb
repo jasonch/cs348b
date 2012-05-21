@@ -129,9 +129,10 @@ function showThumbnail(d) {
 
 // Toggle children on click.
 function click(d) {
-   if (d.name == "Root") return;
-   window.location.href = "<%= url_for :action => 'index', :only_path => false %>" + "/" + d.id;
-   //update(d);
+   if (d.name == "Root") 
+    window.location.href = "<%= url_for :action => 'index', :only_path => false %>" + "/" + 0;
+   else
+     window.location.href = "<%= url_for :action => 'index', :only_path => false %>" + "/" + d.id;
 }
 
 d3.select(self.frameElement).style("height", "2000px");
