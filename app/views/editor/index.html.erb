@@ -34,6 +34,7 @@
           mousemove: drawScribble,
           mouseup: finishScribble
         },
+        /*
         { name: "ellipse",
           title: "Ellipse",
           onclick: function() {changeTool("ellipse"); },
@@ -42,6 +43,7 @@
           mouseup: EMPTYFUNC
 
         },
+        */
         { name: "image",
           title: "Image",
           onclick: showImageURLBox 
@@ -51,7 +53,7 @@
           onclick: undo
         },
         { name: "clear",
-          title: "Clear Canvas",
+          title: "Clear",
           onclick: clearCanvas
         }];
         initCanvasEvents();
@@ -71,7 +73,11 @@
             myCanvasContext().strokeStyle = hex;
             EditorStates.stroke = hex;
           },
-          onBeforeShow: function () { if(this.value != undefined) $(this).ColorPickerSetColor(this.value); }
+          onBeforeShow: function () { if(this.value != undefined) $(this).ColorPickerSetColor(this.value); },
+          onHide: function(hsb, hex, rgb, el) {
+            $(el).val(hex);
+            $('.colorpicker_submit').click();
+          }
         });
     });
   </script>
@@ -79,8 +85,10 @@
   <%= label_tag "revTitle", "Title: "%> <%= text_field_tag "revTitle", title %>
 <div id='optionsPane'>
 </div>
+<div id='canvasWrapper'>
 <canvas id='myCanvas' width='800' height='600'> </canvas>
 <canvas id='backCanvas' width='800' height='600'> </canvas>
+</div>
 <div class='actionPane'>
         <%= link_to_function "Commit", 'commit();' %> <%= link_to "Timeline", :action => 'viewTree' %>
 </div>

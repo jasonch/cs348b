@@ -94,7 +94,6 @@ function changeTool(tool) {
 
     for (var i = 0; i < EditorStates.options.length; i++) {
       var option = EditorStates.options[i];
-      console.log(option);
 
       var link = "<a href='#' class='option_" + option.name + "'>" + option.title + "</a>";
 
@@ -148,6 +147,7 @@ function commit() {
 
 
 function showImageURLBox(event) {
+/*
   $('#imageUrlBox').remove();
   var box = "<div class='lightbox' id='imageUrlBox'></div>";
   var label = "<label for='imageUrlInput'>Link: </label>";
@@ -164,6 +164,37 @@ function showImageURLBox(event) {
           alert('submitted'); 
           $('#imageUrlBox').remove();
   });
+*/
+  var link = prompt("Image URL: ");
+  var newImage = new Image();
+      newImage.onload = function () {
+          $(this).attr('id', 'floatingImage')
+                .bind('mousedown', function(event) {
+                    event.preventDefault();
+                    $(this).bind('mousemove', function(event) {
+                            $(this).offset({top: event.clientY - $(this)[0].height/2, left: event.clientX- $(this)[0].width/2});
+                    });
+                    $(this).bind('mouseup', function(event) {
+                      if (confirm("Place image? \nOnce an image is placed you cannot move it anymore!")) {
+                        $(this).unbind("mousemove");
+                        myCanvasContext().drawImage(newImage,$(this).offset().left - $("#myCanvas").offset().left, $(this).offset().top - $("#myCanvas").offset().top);
+                        $(this).remove();
+                      }
+                    });
+
+                })
+                .appendTo($("#canvasWrapper")) 
+                .offset($('#myCanvas').offset());
+        };
+
+  //newImage.onload = function() {
+  //  myCanvasContext().drawImage(this, 0, 0);
+  //};
+  newImage.onerror = function() {
+    alert('Error loading image');
+  };
+  newImage.src=link;
+
 
 }
 

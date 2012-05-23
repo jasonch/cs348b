@@ -26,7 +26,12 @@
   border: 1px black solid;
 }
 
-
 #backCanvas {
   display: none;
+}
+
+#floatingImage {
+  position: absolute;
+  padding: 5px;
+  border: 1px dashed gray;
 }
