@@ -42,7 +42,6 @@ class EditorController < ApplicationController
     # create the new revision
     rev = Revision.new
     rev.title = params[:title]
-    rev.body = ""
     if (@revision)
       rev.revision_id = @revision.id
     end
@@ -90,7 +89,7 @@ class EditorController < ApplicationController
   ### Private methods ###
   private 
   def revisionToJSON(rev) 
-    el = {:name => rev.title, :body => rev.body, :filepath => rev.filepath, :id => rev.id, :children => []}
+    el = {:name => rev.title, :filepath => rev.filepath, :id => rev.id, :children => []}
     rev.revisions.each do |r|
       el[:children] << revisionToJSON(r)
     end

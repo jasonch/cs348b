@@ -79,6 +79,7 @@
             $('.colorpicker_submit').click();
           }
         });
+        changeTool("scribble");
     });
   </script>
 
@@ -86,8 +87,8 @@
 <div id='optionsPane'>
 </div>
 <div id='canvasWrapper'>
-<canvas id='myCanvas' width='800' height='600'> </canvas>
-<canvas id='backCanvas' width='800' height='600'> </canvas>
+<canvas id='myCanvas' class='canvas' width='800' height='600'> </canvas>
+<canvas id='backCanvas' class='canvas' width='800' height='600'> </canvas>
 </div>
 <div class='actionPane'>
         <%= link_to_function "Commit", 'commit();' %> <%= link_to "Timeline", :action => 'viewTree' %>

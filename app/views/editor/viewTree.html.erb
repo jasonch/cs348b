@@ -44,7 +44,6 @@ function update(source) {
 
 
       // Enter any new nodes at the parent's previous position.
-  console.log(nodeEnter);
   nodeEnter.append("svg:rect")
           .attr('y', -1*thumbheight/2)
           .attr('width', thumbwidth)
@@ -117,15 +116,8 @@ function update(source) {
   });
 
 
-  drawThumbnails(nodes);
 }
 
-function showThumbnail(d) {
-        $('#thumbnail').offset({ top: d.x, left: d.y});
-        console.log(d);
-  console.log("top: " + d.y + " left: " + d.x);
-  $('#thumbnail').html(d.body).show();
-}
 
 // Toggle children on click.
 function click(d) {
