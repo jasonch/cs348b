@@ -147,24 +147,6 @@ function commit() {
 
 
 function showImageURLBox(event) {
-/*
-  $('#imageUrlBox').remove();
-  var box = "<div class='lightbox' id='imageUrlBox'></div>";
-  var label = "<label for='imageUrlInput'>Link: </label>";
-  var input = "<input type='text' id='imageUrlInput'></input>";
-  var submit = "<input type='button' value='Add' id='imageUrlSubmit'></input>";
-
-
-  $('body').append($(box));
-  $("#imageUrlBox").offset({top: event.clientY + 10, left: event.clientX})
-        .append(label);
-  $("#imageUrlBox").append(input).focus();
-  $("#imageUrlBox").append(submit)
-  $("#imageUrlSubmit").click(function() { 
-          alert('submitted'); 
-          $('#imageUrlBox').remove();
-  });
-*/
   var link = prompt("Image URL: ");
   var newImage = new Image();
       newImage.onload = function () {
@@ -199,22 +181,10 @@ function showImageURLBox(event) {
 }
 
 function showLineWidthBox (event) {
-  $('#lineWidthBox').remove();
-  var box = "<div class='lightbox' id='lineWidthBox'></div>";
-  var label = "<label for='lineWidthInput'>Width: </label>";
-  var input = "<input type='text' id='lineWidthInput' value="+myCanvasContext().lineWidth+"></input>";
-
-  $('body').append($(box));
-
-  $('#lineWidthBox').offset({top: event.clientY+10, left: event.clientX })
-          .append(label);
-  $('#lineWidthBox').append(input);
-
-  $('#lineWidthInput').focus();
-
-  $('#lineWidthInput').blur(function() { 
-         myCanvasContext().lineWidth = $('#lineWidthInput').val();
-         EditorStates.strokeWidth = myCanvasContext().lineWidth;
-         $('#lineWidthBox').remove();
- });
+  var lineWidth = parseInt(prompt("Enter width in pixels (e.g. 1): "));
+  if (isNaN(lineWidth)) alert("Invalid number!");
+  else {
+    myCanvasContext().lineWidth =  lineWidth;
+    EditorStates.strokeWidth = myCanvasContext().lineWidth;
+  }
 }
