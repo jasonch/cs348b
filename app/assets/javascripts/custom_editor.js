@@ -148,6 +148,7 @@ function commit() {
 
 function showImageURLBox(event) {
   var link = prompt("Image URL: ");
+  if (link == null) return;
   var newImage = new Image();
       newImage.onload = function () {
           $(this).attr('id', 'floatingImage')
@@ -169,9 +170,6 @@ function showImageURLBox(event) {
                 .offset($('#myCanvas').offset());
         };
 
-  //newImage.onload = function() {
-  //  myCanvasContext().drawImage(this, 0, 0);
-  //};
   newImage.onerror = function() {
     alert('Error loading image');
   };
@@ -181,10 +179,11 @@ function showImageURLBox(event) {
 }
 
 function showLineWidthBox (event) {
-  var lineWidth = parseInt(prompt("Enter width in pixels (e.g. 1): "));
-  if (isNaN(lineWidth)) alert("Invalid number!");
+  var lineWidth = prompt("Enter width in pixels: ", myCanvasContext().lineWidth);
+  if (lineWidth == null) return;
+  if (isNaN(parseInt(lineWidth))) alert("Invalid number!");
   else {
-    myCanvasContext().lineWidth =  lineWidth;
+    myCanvasContext().lineWidth =  parseInt(lineWidth);
     EditorStates.strokeWidth = myCanvasContext().lineWidth;
   }
 }
