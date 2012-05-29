@@ -22,8 +22,13 @@
   background: #ffff88;
 }
 
+.layersPane {
+  display: inline-block;
+  width: 200px;
+  padding: 10px 0px;
+}
+
 #myCanvas {
-  border: 1px black solid;
 }
 
 #backCanvas {
@@ -31,17 +36,27 @@
 }
 
 #canvasWrapper {
-  display:block;
+  display:inline-block;
   width: 800px;
   height: 600px;
+  position: relative;
 }
 
 .canvas {
+  border: 1px black solid;
   position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 #floatingImage {
   position: absolute;
   padding: 5px;
   border: 1px dashed gray;
+  z-index: 10000;
+}
+
+.dragItem {
+  padding: 5px 10px;
+  border: dotted 1px gray;
 }

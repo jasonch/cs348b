@@ -6,8 +6,8 @@ class EditorController < ApplicationController
   def index
     if (params[:id])
             if (params[:id] == "0")
-                    session[:curRev] = nil;
-                    @revision = nil;
+                    session[:curRev] = nil
+                    @revision = nil 
             else 
               session[:curRev] = params[:id]
             end
@@ -25,7 +25,7 @@ class EditorController < ApplicationController
   def commit
 
     # check input
-    if (params[:title].nil? || params[:title] == "" || params[:filepath].nil?) 
+    if (params[:title].nil? || params[:title] == "" || params[:layers].nil? || params[:layers] == "") 
       flash[:error] = "Error while commiting."
       respond_to do |format| 
             format.js { render :layout => false }
@@ -37,7 +37,7 @@ class EditorController < ApplicationController
             @revision = Revision.find(session[:curRev])
     end
     
-    filepath = params[:filepath]
+    layers = ActiveSupport::JSON.decode(params[:layers])
 
     # create the new revision
     rev = Revision.new
@@ -47,12 +47,31 @@ class EditorController < ApplicationController
     end
     rev.save
 
-    # save again here because we don't know the rev id until it's saved first
-    fullpath = "/images/" + params[:title] + "-" + rev.id.to_s + ".png"
-    File.open("public" + fullpath, "wb") do |f| 
-            f.write(Base64.decode64(filepath))
+    # save each layer 
+    layers.each do |layer| 
+      id = layer["id"]
+      z = layer["zorder"]
+      if (id == "backCanvas")
+        name = "thumb"
+        fullpath = "/images/" + rev.id.to_s + "-thumb.png"
+      else 
+        name = layer["name"]
+        fullpath = "/images/" + rev.id.to_s + "-" + z + ".png"
+      end
+      
+      File.open("public" + fullpath, "wb") do |f| 
+              f.write(Base64.decode64(layer["filepath"]))
+      end
+
+      lr = Layer.new
+      lr.filepath = fullpath
+      lr.revision = rev
+      lr.name = name
+      lr.zorder = z
+      lr.save
     end
-    rev.filepath = fullpath
+
+    # save again here because we didn't know the rev id?
     rev.save
    
     # update current revision
@@ -78,8 +97,7 @@ class EditorController < ApplicationController
     end
 
     respond_with @json do |format|
-            format.json {render :layout => false, :text => @json.to_json }
-
+      format.json {render :layout => false, :text => @json.to_json }
     end    
 
   end
@@ -89,7 +107,7 @@ class EditorController < ApplicationController
   ### Private methods ###
   private 
   def revisionToJSON(rev) 
-    el = {:name => rev.title, :filepath => rev.filepath, :id => rev.id, :children => []}
+    el = {:name => rev.title, :filepath => rev.layers.select{|l| l.name == 'thumb'}[0].filepath, :id => rev.id, :children => []}
     rev.revisions.each do |r|
       el[:children] << revisionToJSON(r)
     end

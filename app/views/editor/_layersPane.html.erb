@@ -1,0 +1,23 @@
+<div class='layersPane'>
+<% layers.sort_by{|el| el[:zorder]}.each_with_index do |layer, i| %>
+  <div class='dropSlot' id='slot<%= i %>'>
+    <div class='dragItem ui-draggable' id='layer<%= layer.id %>'><%= layer.name %></div>
+  </div>
+<% end %>
+</div>
+<script type='text/javascript'>
+    $('.dropSlot').droppable({
+      accept: '.dragItem',
+      hoverClass: '.dragHovered',
+      drop: handleDropLayer
+    });
+
+    $('.dragItem').draggable({
+      containment: '.layersPane',
+      snap: '.dropSlot',
+      cursor: 'move',
+      revert: true,
+      stack: '.layersPane .dropSlot'
+    });
+
+</script>

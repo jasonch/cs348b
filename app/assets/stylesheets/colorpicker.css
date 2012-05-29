@@ -1,6 +1,7 @@
 .colorpicker {
 	width: 356px;
 	height: 176px;
+  z-index: 1000;
 	overflow: hidden;
 	position: absolute;
 	background: url(../images/colorpicker_background.png);

@@ -7,5 +7,14 @@ class CreateLayers < ActiveRecord::Migration
       t.string :name
       t.timestamps
     end
+    
+    Revision.find(:all).each do |r|
+      layer = Layer.new
+      layer.revision = r
+      layer.filepath = r.filepath
+      layer.zorder = 1
+      layer.name = "layer 1"
+      layer.save
+    end
   end
 end

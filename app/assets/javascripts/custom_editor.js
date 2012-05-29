@@ -1,9 +1,14 @@
-function myCanvas() {
-  return $('#myCanvas')[0];
+
+function myCanvas(id) {
+  if (id == undefined) 
+    id = EditorStates.curCanvas;
+  return $('#' + id)[0];
 }
 
-function myCanvasContext() {
-  return $('#myCanvas')[0].getContext("2d");
+function myCanvasContext(id) {
+  if (id == undefined)
+    id = EditorStates.curCanvas;
+  return $('#' + id)[0].getContext("2d");
 
 }
 
@@ -30,17 +35,16 @@ function addScribble() {
 
 
 function undo() {
-  console.log("undo");
   clearCanvas();
   myCanvasContext().drawImage($('#backCanvas')[0], 0, 0);
 
 }
 
-function clearCanvas() {
-  myCanvasContext().clearRect(0,0, 800,600);
-  $('#myCanvas')[0].width = $('#myCanvas')[0].width;
-  myCanvasContext().lineWidth = EditorStates.strokeWidth; 
-  myCanvasContext().strokeStyle = EditorStates.stroke; 
+function clearCanvas(id) {
+  if (id == undefined)
+    id = EditorStates.curCanvas;
+  myCanvasContext(id).clearRect(0,0, 800,600);
+  myCanvas(id).width = myCanvas(id).width;
 }
 
 function changeTool(tool) {
@@ -54,17 +58,17 @@ function changeTool(tool) {
   $('#optionsPane a').removeClass('selected');
   $('.option_'+tool).addClass('selected');
 
-  $('#myCanvas').unbind('mousedown');
-  $('#myCanvas').unbind('mousemove');
-  $('#myCanvas').unbind('mouseup');
+  $(myCanvas()).unbind('mousedown');
+  $(myCanvas()).unbind('mousemove');
+  $(myCanvas()).unbind('mouseup');
 
   if (option) {
-      $('#myCanvas').bind("mousedown", function( event ) {
+      $(myCanvas()).bind("mousedown", function( event ) {
       option.mousedown(event);
-      $('#myCanvas').bind("mousemove", function(event) {option.mousemove(event) });
-      $('#myCanvas').bind('mouseup', function() {
+      $(myCanvas()).bind("mousemove", function(event) {option.mousemove(event) });
+      $(myCanvas()).bind('mouseup', function() {
              option.mouseup(event); 
-             $('#myCanvas').unbind('mousemove');
+             $(myCanvas()).unbind('mousemove');
       });
     });
 
@@ -73,21 +77,21 @@ function changeTool(tool) {
 }
 
   function startScribble(event) {
-    backCanvasContext().drawImage($('#myCanvas')[0], 0, 0);
-    console.log(event.offsetX + ", " + event.offsetY);
+    myCanvas().changed = true;
+    backCanvasContext().drawImage(myCanvas(), 0, 0);
+    myCanvasContext().strokeStyle = EditorStates.stroke;
+    myCanvasContext().lineWidth =  EditorStates.strokeWidth;
     myCanvasContext().beginPath();
     myCanvasContext().moveTo(event.offsetX, event.offsetY);
 
   }
   function drawScribble(event) {
-    console.log(event.X);
     var context = myCanvasContext(); 
     context.lineTo(event.offsetX, event.offsetY); 
     context.stroke();
 
   }
   function finishScribble(event) {
-    console.log('save action');
   }
 
   function initCanvasEvents() {
@@ -103,78 +107,44 @@ function changeTool(tool) {
   }
 
 
-  function drawSomething() {
-           var canvas = document.getElementById("myCanvas");
-            var context = canvas.getContext("2d");
- 
-            // draw cloud
-            context.beginPath(); // begin custom shape
-            context.moveTo(170, 80);
-            context.bezierCurveTo(130, 100, 130, 150, 230, 150);
-            context.bezierCurveTo(250, 180, 320, 180, 340, 150);
-            context.bezierCurveTo(420, 150, 420, 120, 390, 100);
-            context.bezierCurveTo(430, 40, 370, 30, 340, 50);
-            context.bezierCurveTo(320, 5, 250, 20, 250, 50);
-            context.bezierCurveTo(200, 5, 150, 20, 170, 80);
-            context.closePath(); // complete custom shape
-            context.lineWidth = 5;
-            context.fillStyle = "#8ED6FF";
-            context.fill();
-            context.strokeStyle = "#0000ff";
-            context.stroke();
- 
-            // save canvas image as data url (png format by default)
-            var dataURL = canvas.toDataURL();
- 
-            // set canvasImg image src to dataURL
-            // so it can be saved as an image
-            //document.getElementById("canvasImg").src = dataURL;
-  }
- 
 function commit() {
-  var url = $('#myCanvas')[0].toDataURL('image/png');
-  var url = url.replace(/^data:image\/(png|jpg);base64,/,"");
+  // copy all layers onto backCanvas to create thumbnail
+  console.log('commit');
+  $('#commitBtn')[0].disabled = 'disabled';
+
+  clearCanvas('backCanvas');
+
+  var layers = $('.canvas'), layerArr = [];
+  
+  for (var i = 0; i < layers.length; i++) {
+    myCanvasContext('backCanvas').drawImage(myCanvas(layers[i].id), 0, 0);
+  }
+
+  for (var i = 0; i < layers.length; i++) {
+    if (true) { // layers[i].changed, later to implement image file sharing
+      var url = myCanvas(layers[i].id).toDataURL('image/png');
+      var url = url.replace(/^data:image\/(png|jpg);base64,/,"");
+
+      layerArr.push({id: layers[i].id, zorder: layers[i].style.zIndex, name: "Layer "+layers[i].style.zIndex, filepath: url});
+    } 
+  }
+
+  if (layerArr.length == 0) return; // no changes made
+
   var title = $('#revTitle').val(); 
-        console.log(url);
-  $.post('/editor/commit', { filepath: url, title: title}, function(data) {
-
+  $.post('/editor/commit', { layers: JSON.stringify(layerArr), title: title}, function(data) {
     console.log(data);
-
-
+    $('#commitBtn')[0].disabled = '';
   });
 
+  clearCanvas('backCanvas');
 }
 
 
 function showImageURLBox(event) {
   var link = prompt("Image URL: ");
   if (link == null) return;
-  var newImage = new Image();
-      newImage.onload = function () {
-          $(this).attr('id', 'floatingImage')
-                .bind('mousedown', function(event) {
-                    event.preventDefault();
-                    $(this).bind('mousemove', function(event) {
-                            $(this).offset({top: event.clientY - $(this)[0].height/2, left: event.clientX- $(this)[0].width/2});
-                    });
-                    $(this).bind('mouseup', function(event) {
-                      if (confirm("Place image? \nOnce an image is placed you cannot move it anymore!")) {
-                        $(this).unbind("mousemove");
-                        myCanvasContext().drawImage(newImage,$(this).offset().left - $("#myCanvas").offset().left, $(this).offset().top - $("#myCanvas").offset().top);
-                        $(this).remove();
-                      }
-                    });
-
-                })
-                .appendTo($("#canvasWrapper")) 
-                .offset($('#myCanvas').offset());
-        };
-
-  newImage.onerror = function() {
-    alert('Error loading image');
-  };
-  newImage.src=link;
-
+  new ImageRect(link);
 
 }
 
@@ -183,7 +153,18 @@ function showLineWidthBox (event) {
   if (lineWidth == null) return;
   if (isNaN(parseInt(lineWidth))) alert("Invalid number!");
   else {
-    myCanvasContext().lineWidth =  parseInt(lineWidth);
-    EditorStates.strokeWidth = myCanvasContext().lineWidth;
+    EditorStates.strokeWidth = parseInt(lineWidth); 
   }
 }
+
+function loadImageIntoLayer(filepath, canvasId) {
+  var image = new Image();
+  image.onload = function () {
+    myCanvas(canvasId).changed = false;
+    myCanvas(canvasId).original_file = filepath;
+    myCanvasContext(canvasId).drawImage(image, 0, 0);
+  };
+  image.src = window.location.origin + filepath; 
+
+}
+
