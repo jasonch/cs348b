@@ -9,7 +9,6 @@
   <script type='text/javascript'>
     var EMPTYFUNC = function(){};
     var EditorStates = {};
-    EditorStates.curTool = null;
     $("body").ready(function () {
       //addScribble();
       //drawSomething();
@@ -31,6 +30,10 @@
         { name: "scribble",
           title: "Scribble",
           onclick: function() { changeTool(new Scribble(myCanvas));},
+        },
+        { name: "path",
+          title: "Path",
+          onclick: function() { changeTool(new Path(myCanvas));},
         },
         /*
         { name: "ellipse",

@@ -41,14 +41,18 @@ function undo() {
 }
 
 function clearCanvas(id) {
-  if (id == undefined)
-    id = EditorStates.curCanvas;
   myCanvasContext(id).clearRect(0,0, 800,600);
   myCanvas(id).width = myCanvas(id).width;
 }
 
 function changeTool(tool) {
-  $(myCanvas()).bind("mousedown", function() {tool.mouseDown(event); });
+  $(myCanvas()).unbind("mousedown");
+  $(myCanvas()).unbind("mousemove");
+  $(myCanvas()).unbind("mouseup");
+      
+  $(myCanvas()).bind("mousedown", function() {
+          backCanvasContext().drawImage(myCanvas(), 0, 0);
+          tool.mouseDown(event); });
   $(myCanvas()).bind("mouseup",  function() { tool.mouseUp(event); });
   $(myCanvas()).bind("mousemove", function() { tool.mouseMove(event); });
 
@@ -56,27 +60,8 @@ function changeTool(tool) {
   $('.option_'+tool.name).addClass('selected');
   return ;
 
-
-
 }
 
-  function startScribble(event) {
-    myCanvas().changed = true;
-    backCanvasContext().drawImage(myCanvas(), 0, 0);
-    myCanvasContext().strokeStyle = EditorStates.stroke;
-    myCanvasContext().lineWidth =  EditorStates.strokeWidth;
-    myCanvasContext().beginPath();
-    myCanvasContext().moveTo(event.offsetX, event.offsetY);
-
-  }
-  function drawScribble(event) {
-    var context = myCanvasContext(); 
-    context.lineTo(event.offsetX, event.offsetY); 
-    context.stroke();
-
-  }
-  function finishScribble(event) {
-  }
 
   function initCanvasEvents() {
 
