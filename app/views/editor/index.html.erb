@@ -9,6 +9,7 @@
   <script type='text/javascript'>
     var EMPTYFUNC = function(){};
     var EditorStates = {};
+    EditorStates.curTool = null;
     $("body").ready(function () {
       //addScribble();
       //drawSomething();
@@ -29,10 +30,7 @@
         },
         { name: "scribble",
           title: "Scribble",
-          onclick: function() { changeTool("scribble")},
-          mousedown: startScribble,
-          mousemove: drawScribble,
-          mouseup: finishScribble
+          onclick: function() { changeTool(new Scribble(myCanvas));},
         },
         /*
         { name: "ellipse",
@@ -79,7 +77,6 @@
         <% else %>
           EditorStates.curCanvas = "canvas_<%= @revision.layers[0].id %>";
         <% end %>
-        changeTool("scribble");
     });
   </script>
 

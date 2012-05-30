@@ -48,31 +48,15 @@ function clearCanvas(id) {
 }
 
 function changeTool(tool) {
-  var option;
-  for (var i =0; i < EditorStates.options.length; i++) {
-    if (EditorStates.options[i].name == tool) {
-      option = EditorStates.options[i];
-      break;
-    }
-  }
+  $(myCanvas()).bind("mousedown", function() {tool.mouseDown(event); });
+  $(myCanvas()).bind("mouseup",  function() { tool.mouseUp(event); });
+  $(myCanvas()).bind("mousemove", function() { tool.mouseMove(event); });
+
   $('#optionsPane a').removeClass('selected');
-  $('.option_'+tool).addClass('selected');
+  $('.option_'+tool.name).addClass('selected');
+  return ;
 
-  $(myCanvas()).unbind('mousedown');
-  $(myCanvas()).unbind('mousemove');
-  $(myCanvas()).unbind('mouseup');
 
-  if (option) {
-      $(myCanvas()).bind("mousedown", function( event ) {
-      option.mousedown(event);
-      $(myCanvas()).bind("mousemove", function(event) {option.mousemove(event) });
-      $(myCanvas()).bind('mouseup', function() {
-             option.mouseup(event); 
-             $(myCanvas()).unbind('mousemove');
-      });
-    });
-
-  }
 
 }
 
