@@ -2,6 +2,11 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+body {
+  position: relative;
+}
+
+
 .scribble a {
   background-image: url(../wymeditor/skins/default/icons.png);
 
@@ -10,8 +15,10 @@
 .lightbox {
   position: absolute;
   border: blue solid 2px;
+  padding: 10px;
   min-width: 200px;
   background: white;
+  z-index: 10000;
 }
 
 #optionsPane a {

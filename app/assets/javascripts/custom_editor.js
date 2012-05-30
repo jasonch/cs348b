@@ -168,3 +168,8 @@ function loadImageIntoLayer(filepath, canvasId) {
 
 }
 
+
+
+function showCopyLayerDialog() {
+  var dia = new CopyLayerDialog(document.body);
+}

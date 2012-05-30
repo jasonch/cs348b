@@ -23,7 +23,7 @@ var vis = d3.select("#chart").append("svg:svg")
   .append("svg:g")
     .attr("transform", "translate(40,0)");
 
-d3.json('/editor/getJSONTree.json', function(json) {
+  d3.json('<%= url_for :controller => "editor", :action => "getJSONTree" %>', function(json) {
   json.x0 = 300;
   json.y0 = 0;
   update(root = json);
@@ -60,7 +60,7 @@ function update(source) {
           .on("click", click);
 	nodeEnter.append("svg:text")
     		.attr("y", -1*thumbheight/2 - 5)
-      	.text(function(d) { return d.name; });
+      	.text(function(d) { return d.name + " (" + d.id + ")"; });
 
   // Transition nodes to their new position.
 	nodeEnter.transition()

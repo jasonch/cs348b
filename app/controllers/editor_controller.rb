@@ -8,7 +8,9 @@ class EditorController < ApplicationController
             if (params[:id] == "0")
                     session[:curRev] = nil
                     @revision = nil 
-            else 
+            elsif (!Revision.find_by_id(params[:id]))
+              redirect_to :action => "index", :id => 0
+            else
               session[:curRev] = params[:id]
             end
     end
@@ -102,7 +104,17 @@ class EditorController < ApplicationController
 
   end
 
+  def getAllRevisions
+    respond_to do |format|
+            format.js { render :layout => false, :text => Revision.all.to_json }
+    end
+  end
 
+  def getLayersByRevision
+    respond_to do |format|
+            format.js {render :layout => false, :text => Revision.find(params[:revId]).layers.to_json}
+    end
+  end
 
   ### Private methods ###
   private 
