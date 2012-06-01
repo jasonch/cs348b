@@ -9,9 +9,8 @@
   <script type='text/javascript'>
     var EMPTYFUNC = function(){};
     var EditorStates = {};
+    EditorStates.strokeWidth = 1;
     $("body").ready(function () {
-      //addScribble();
-      //drawSomething();
       EditorStates.options = [
         { name: "new",
           title: "New",
@@ -63,7 +62,7 @@
         }];
         initCanvasEvents();
 
-        $('.option_color').ColorPicker({
+        $('#option_color').ColorPicker({
           color: '#0000ff',
           onSubmit: function (hsb, hex, rgb, el) {
             $(el).val(hex);
@@ -96,8 +95,7 @@
 <% end %>        
 <canvas id='backCanvas' class='canvas' width='800' height='600'> </canvas>
 </div>
-<% if @revision.nil? %>
-<% end %>
 <div class='actionPane'>
-        <%= button_to_function "Commit", 'commit();', :id=>'commitBtn' %> <%= link_to "Timeline", :action => 'viewTree' %>
+<%= button_to_function "Commit", 'commit();', :id=>'commitBtn', :class => 'option' %> 
+<%= link_to("Timeline", "viewTree", {:class => 'option'}) %>
 </div>

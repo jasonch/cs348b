@@ -57,7 +57,7 @@ function changeTool(tool) {
   $(myCanvas()).bind("mousemove", function() { tool.mouseMove(event); });
 
   $('#optionsPane a').removeClass('selected');
-  $('.option_'+tool.name).addClass('selected');
+  $('#option_'+tool.name).addClass('selected');
   return ;
 
 }
@@ -68,10 +68,10 @@ function changeTool(tool) {
     for (var i = 0; i < EditorStates.options.length; i++) {
       var option = EditorStates.options[i];
 
-      var link = "<a href='#' class='option_" + option.name + "'>" + option.title + "</a>";
+      var link = "<a href='#' id='option_" + option.name + "' class='option'>" + option.title + "</a>";
 
       $('#optionsPane').append(link);
-      $('#optionsPane').find("a.option_"+option.name).click(option.onclick);
+      $('#optionsPane').find("a#option_"+option.name).click(option.onclick);
     }
   }
 
@@ -118,7 +118,7 @@ function showImageURLBox(event) {
 }
 
 function showLineWidthBox (event) {
-  var lineWidth = prompt("Enter width in pixels: ", myCanvasContext().lineWidth);
+  var lineWidth = prompt("Enter width in pixels: ", EditorStates.strokeWidth);
   if (lineWidth == null) return;
   if (isNaN(parseInt(lineWidth))) alert("Invalid number!");
   else {

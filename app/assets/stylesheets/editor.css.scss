@@ -21,13 +21,27 @@ body {
   z-index: 10000;
 }
 
-#optionsPane a {
-  padding: 0px 5px;
+.option {
+  text-decoration: none;
+  display: inline-block;
+  background-color: #444;
+  background-position: 0 0;
+  border-width: 0 0 0 1px;
+  border-style: solid;
+  border-color: silter;
+  text-align: left;
+  padding: 5px 10px;
+  font: bold 20px Trebuchet MS, sans-serif;
+  color: white;
+  text-shadow: white 0 0 1px;
+  cursor: pointer;
 }
 
 #optionsPane a.selected {
   background: #ffff88;
+  color: black;
 }
+
 
 .layersPane {
   display: inline-block;

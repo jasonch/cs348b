@@ -30,4 +30,89 @@
   border: 1px solid black;
 }
 
+.buttons {
+	color: red;
 
+}
+
+body {
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+    width: 100%;
+	height: auto;
+	text-align: center;
+	/*background-image:url(http://www.silverlight.net/content/samples/sl2/silverlightairlines/run/Images/Background.jpg);*/
+	background-image:url(/images/Background.jpg);
+	background-repeat:no-repeat;
+	background-size:cover;
+	
+	}
+
+h1 {
+	font-family: Verdana, sans-serif;
+	color: #659EC7;
+}
+
+canvas
+{
+	background-color: white;
+	border-radius: 5px;
+}
+
+#options
+{
+	display: none;
+}
+
+.options
+{
+	display: none;
+}
+
+.actionPane
+{
+	font-family: Verdana, sans-serif;
+	position: relative; left:35%;
+	text-align: center;
+	width: 30%;
+}
+
+table
+{
+	text-align: center;
+	width: 100%;
+	position: relative;
+	float: left;
+	
+}
+
+
+td
+{
+ border: 2px solid white;
+ border-radius: 10px;
+ padding: 0px;
+}
+
+#space
+{
+	border: none;
+	padding: 2px;
+}
+
+#commit
+{
+	float: left;
+	width: 100%; 
+	position: relative;
+
+}
+
+#timline
+{
+	position: relative;
+	float: left;
+	border: 1px solid black;
+
+}
