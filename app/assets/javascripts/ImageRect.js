@@ -44,6 +44,7 @@ ImageRect.prototype.finalize = function () {
   if (confirm("Place image? \nOnce an image is placed you cannot move it anymore!")) {
     $(this.img).unbind("mousemove");
     // note +6 to account for border and padding
+    backCanvasContext().drawImage(myCanvas(),0,0);
     myCanvasContext().drawImage(this.img, parseInt(this.img.style.left) + 6, parseInt(this.img.style.top) + 6);
     $(this.img).remove();
   }

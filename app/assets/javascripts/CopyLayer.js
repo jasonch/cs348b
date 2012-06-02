@@ -60,8 +60,8 @@ CopyLayerDialog.prototype.chooseLayer = function(rev) {
           .appendTo(section);
     }
     $(section).appendTo(obj.elem);
-    $('<input type="button" id ="insertLayerBtn" value="Insert"></input>')
-          .appendTo(obj.elem)
+    $('<div><input type="button" id ="insertLayerBtn" value="Insert"></input></div>')
+          .appendTo(section)
           .click(function() { obj.submit(); } );
   });
 
