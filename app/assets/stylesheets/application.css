@@ -12,6 +12,10 @@
  *= require_tree .
 */
 
+body {
+  position: relative;
+}
+
 #thumbnail {
   position: absolute;
   z-index: 100;
