@@ -5,6 +5,7 @@ function Scribble(canvasCallback) {
   this.lineColor = "#000";
 
   this.mouseIsDown = false;
+  $(this.canvas()).css('cursor', 'default');
 }
 
 Scribble.prototype = new Tool("scribble", "Scribble");
