@@ -3,11 +3,10 @@ class Revision < ActiveRecord::Base
   has_many :revisions
   has_many :layers
 
-
-  after_create :set_default_layer
-
   validates_presence_of :title
 
+  # default doesn't work, gotta figure out
+  #after_create :set_default_layer
   def set_default_layer
     layer = Layer.new.default
     layer.revision = self

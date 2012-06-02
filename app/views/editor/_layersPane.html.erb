@@ -1,11 +1,17 @@
-<div class='layersPane'>
-<% layers.sort_by{|el| el[:zorder]}.each_with_index do |layer, i| %>
-  <div class='dropSlot' id='slot<%= i %>'>
-    <div class='dragItem ui-draggable' id='layer<%= layer.id %>'><%= layer.name %></div>
-  </div>
-<% end %>
-</div>
-<script type='text/javascript'>
+<% if @revision.nil? %>
+  <div class='dropSlot' id='slot0'>
+    <div class='dragItem ui-draggable' id='layer0'>Layer 1</div>
+    </div>
+<% else %>
+  <% layers = @revision.layers.select{|l| l.name != 'thumb'} %>
+  <% layers.sort{|a,b| b.zorder <=> a.zorder}.each_with_index do |layer, i| %>
+    <div class='dropSlot' id='slot<%= i %>'>
+      <div class='dragItem ui-draggable' id='layer<%= layer.id %>'><%= layer.name %></div>
+    </div>
+  <% end %>
+  
+  <script type='text/javascript'>
+    var layers = <%= raw layers %>    
     $('.dropSlot').droppable({
       accept: '.dragItem',
       hoverClass: '.dragHovered',
@@ -20,4 +26,5 @@
       stack: '.layersPane .dropSlot'
     });
 
-</script>
+  </script>
+<% end %>

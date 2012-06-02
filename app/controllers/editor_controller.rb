@@ -10,24 +10,25 @@ class EditorController < ApplicationController
   def set_user_from_session
           if (@user.nil?)
                   @user = User.find(session[:user])
+                  if (@user.cur_revision)
+                    @revision = Revision.find(@user.cur_revision)
+                  end
           end
   end
 
   def index
-    @user = User.find(session[:user])
     if (params[:id] && params[:id] != "0")
-            @revision = Revision.find(params[:id])
-            @user.cur_revision = @revision.id
+            @user.cur_revision = params[:id] 
+            @revision = Revision.find(@user.cur_revision)
+            @user.save!
     end
-    @revision = Revision.find(@user.cur_revision)
-
   end
 
   def commit
 
     # check input
     if (params[:title].nil? || params[:title] == "" || params[:layers].nil? || params[:layers] == "") 
-      flash[:error] = "Error while commiting."
+      flash[:error] = "Please enter a title"
       respond_to do |format| 
             format.js { render :layout => false }
       end 
@@ -35,18 +36,18 @@ class EditorController < ApplicationController
     end
 
     
-    layers = ActiveSupport::JSON.decode(params[:layers])
 
     # create the new revision
     rev = Revision.new
     rev.title = params[:title]
     rev.user = @user
-    if (@revision) # set parent revision
-      rev.revision_id = @revision.id
+    if (!@revision.nil?) # set parent revision
+      rev.revision_id= @revision.id
     end
     rev.save!
 
     # save each layer 
+    layers = ActiveSupport::JSON.decode(params[:layers])
     layers.each do |layer| 
       if (layer["id"] == "backCanvas")
         name = "thumb"
@@ -59,7 +60,7 @@ class EditorController < ApplicationController
       lr.revision = rev
       lr.name = name
       lr.zorder = layer["zorder"]
-      lr.save
+      lr.save!
     end
 
     # save again here because we didn't know the rev id?
@@ -68,6 +69,7 @@ class EditorController < ApplicationController
     # update current revision
     @user.cur_revision = rev.id
     @revision = rev 
+    @user.save
 
     flash[:notice] = "Commit successful"
     respond_to do |format| 
@@ -77,7 +79,9 @@ class EditorController < ApplicationController
   end
 
   def viewTree 
-
+    if @revision 
+      @layers = @revision.layers
+    end
   end
 
   def getJSONTree 
@@ -95,7 +99,7 @@ class EditorController < ApplicationController
 
   def getAllRevisions
     respond_to do |format|
-            format.js { render :layout => false, :text => Revision.find_by_user_id(@user.id).to_json }
+            format.js { render :layout => false, :text => Revision.find(:all, :conditions => {:user_id => @user.id}).to_json }
     end
   end
 

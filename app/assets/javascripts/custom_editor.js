@@ -81,11 +81,13 @@ function commit() {
   console.log('commit');
   $('#commitBtn')[0].disabled = 'disabled';
 
-  clearCanvas('backCanvas');
 
   var layers = $('.canvas'), layerArr = [];
-  
+ 
+  // draw every layer onto the backcanvas to create thumbnail
+  clearCanvas('backCanvas');
   for (var i = 0; i < layers.length; i++) {
+    if (layers[i].id == 'backCanvas') continue;
     myCanvasContext('backCanvas').drawImage(myCanvas(layers[i].id), 0, 0);
   }
 
@@ -102,11 +104,11 @@ function commit() {
 
   var title = $('#revTitle').val(); 
   $.post('/editor/commit', { layers: JSON.stringify(layerArr), title: title}, function(data) {
-    console.log(data);
+    //console.log(data);
     $('#commitBtn')[0].disabled = '';
   });
 
-  clearCanvas('backCanvas');
+  //clearCanvas('backCanvas');
 }
 
 

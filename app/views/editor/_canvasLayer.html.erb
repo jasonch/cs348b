@@ -1,7 +1,7 @@
 
 <% if layer.nil? %>
   <canvas class='canvas' width='800' height='600' id='canvas_1' style='z-index: 1'> </canvas>
-<% else %>
+<% elsif layer.name != "thumb" %>
 
   <canvas class='canvas' width='800' height='600' id='canvas_<%= layer.id %>' style='z-index: <%= layer.zorder %>'> </canvas>
 

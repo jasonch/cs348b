@@ -1,8 +1,10 @@
 <%
    if (@revision.nil?)
      title = ""
+     layers = nil
    else 
      title = @revision.title 
+     layers = @revision.layers.select{|l| l.name != 'thumb'}
    end
 %>
 
@@ -77,7 +79,7 @@
         <% if @revision.nil? %>
           EditorStates.curCanvas = "canvas_1";
         <% else %>
-          EditorStates.curCanvas = "canvas_<%= @revision.layers[0].id %>";
+          EditorStates.curCanvas = "canvas_<%= layers.sort{|a,b| b[:zorder] <=> a[:zorder]}[0].id %>";
         <% end %>
     });
   </script>
@@ -86,12 +88,14 @@
 <div id='optionsPane'>
 </div>
 <div id='layersPane'>
+<%= #render :partial => 'layersPane', :locals => {:rev => @revision } 
+%>
 </div>
 <div id='canvasWrapper'>
 <% if @revision.nil? %>
-        <%= render :partial => "canvasLayer", :locals => {:layer => nil } %>
+   <%= render :partial => "canvasLayer", :locals => {:layer => nil } %>
 <% else %>
-  <% @revision.layers.each do |lr| %>
+  <% layers.each do |lr| %>
     <%= render :partial => "canvasLayer", :locals => {:layer => lr  } %>
   <% end %>
 <% end %>

@@ -3,6 +3,8 @@ require 'base64'
 class Layer < ActiveRecord::Base
   # attr_accessible :title, :body
   belongs_to :revision
+  before_save :write_data_to_file
+
   def datapath
           @datapath
   end
@@ -11,7 +13,7 @@ class Layer < ActiveRecord::Base
           @datapath = path
   end
 
-  def save
+  def write_data_to_file
       if (self.name == "thumb")
         fullpath = "/images/" + self.revision.id.to_s + "-thumb.png"
       else 
@@ -23,11 +25,10 @@ class Layer < ActiveRecord::Base
       end
 
       self.filepath = fullpath
-      super
   end
 
   def default
-    self.name = "thumb"
+    self.name = "Layer 1"
     self.zorder = 1
     self
   end

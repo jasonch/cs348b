@@ -4,9 +4,9 @@ class User < ActiveRecord::Base
 
   validates :login, :presence => true, :uniqueness => true
 
-  after_create :add_default_revision
-
   ## This doesn't work for some reason, figure out later
+  #after_create :add_default_revision
+  private
   def add_default_revision
     rev = Revision.new
     rev.title = "New Revision"
