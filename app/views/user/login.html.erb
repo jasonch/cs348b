@@ -1,0 +1,7 @@
+<h1>User login</h1>
+
+
+<%= form_for(:user, :url => {:action => :post_login}) do |f| %>
+  <%= f.text_field (:login) %>
+  <%= f.submit("Login") %>
+<% end %>

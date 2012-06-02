@@ -137,7 +137,11 @@ function loadImageIntoLayer(filepath, canvasId) {
 
 }
 
-
+function viewTimeline(url) {
+  if (confirm("Any uncommitted changes will be lost.", "Continue", "Cancel")) {
+    window.location.href = url;
+  }
+}
 
 function showCopyLayerDialog() {
   var dia = new CopyLayerDialog(document.body);

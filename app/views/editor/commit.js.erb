@@ -1,5 +1,5 @@
 <% if flash[:error].nil? %>
-       $('#message').html("<%= flash[:message] %>");
+       $('#message').html("<%= flash[:notice] %>");
 <% else %>
         $('#message').html("<%= flash[:error] %>");
 <% end %>

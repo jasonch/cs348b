@@ -1,4 +1,6 @@
 Timeline::Application.routes.draw do
+  get "user/login"
+
   get "editor/index"
 
   get "editor/commit"

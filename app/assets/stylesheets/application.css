@@ -116,3 +116,11 @@ td
 	border: 1px solid black;
 
 }
+
+#message {
+  font-size: 24px;
+  line-height: 36px;
+  background-color: yellow;
+  color: red;
+  border-top: 1px dotted red;
+}

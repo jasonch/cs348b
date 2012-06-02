@@ -37,6 +37,11 @@ body {
   cursor: pointer;
 }
 
+input[disabled] {
+  background-color: #888;
+  color: #444;
+}
+
 #optionsPane a.selected {
   background: #ffff88;
   color: black;

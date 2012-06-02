@@ -14,8 +14,17 @@
 </head>
 <body>
 <h1>Online Graphic Editor</h1>
-<div id='message'></div>
+<div id='message'>
+<% if !flash[:notice].nil? %>
+        <%= flash[:notice] %>
+<%end %>
+</div>
+
 <%= yield %>
+
+<% if (!session[:user].nil?) %>
+        <%= link_to "Log out", :controller => "user", :action => "logout" %>
+<% end %>
 
 </body>
 </html>

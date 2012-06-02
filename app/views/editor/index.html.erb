@@ -85,6 +85,8 @@
 <%= label_tag "revTitle", "Title: "%> <%= text_field_tag "revTitle", title %>
 <div id='optionsPane'>
 </div>
+<div id='layersPane'>
+</div>
 <div id='canvasWrapper'>
 <% if @revision.nil? %>
         <%= render :partial => "canvasLayer", :locals => {:layer => nil } %>
@@ -92,10 +94,10 @@
   <% @revision.layers.each do |lr| %>
     <%= render :partial => "canvasLayer", :locals => {:layer => lr  } %>
   <% end %>
-<% end %>        
+<% end %>
 <canvas id='backCanvas' class='canvas' width='800' height='600'> </canvas>
 </div>
 <div class='actionPane'>
 <%= button_to_function "Commit", 'commit();', :id=>'commitBtn', :class => 'option' %> 
-<%= link_to("Timeline", "viewTree", {:class => 'option'}) %>
+<%= button_to_function "Timeline", 'viewTimeline("'+url_for(:action=>'viewTree') + '");', :id=>'timelineBtn', :class => 'option' %> 
 </div>

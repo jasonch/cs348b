@@ -2,25 +2,24 @@ require 'base64'
 
 class EditorController < ApplicationController
   respond_to :html, :js
+  before_filter :set_user_from_session
+
+  @user
+  @revision 
+
+  def set_user_from_session
+          if (@user.nil?)
+                  @user = User.find(session[:user])
+          end
+  end
 
   def index
-    if (params[:id])
-            if (params[:id] == "0")
-                    session[:curRev] = nil
-                    @revision = nil 
-            elsif (!Revision.find_by_id(params[:id]))
-              redirect_to :action => "index", :id => 0
-            else
-              session[:curRev] = params[:id]
-            end
+    @user = User.find(session[:user])
+    if (params[:id] && params[:id] != "0")
+            @revision = Revision.find(params[:id])
+            @user.cur_revision = @revision.id
     end
-
-    if (!session[:curRev].nil? && session[:curRev] != "0")
-            @revision = Revision.find(session[:curRev])
-            logger.debug "Session curRev: #{session[:curRev]}"
-    else
-            logger.debug "No CurRev in session"
-    end
+    @revision = Revision.find(@user.cur_revision)
 
   end
 
@@ -35,52 +34,42 @@ class EditorController < ApplicationController
       return
     end
 
-    if (!session[:curRev].nil?) 
-            @revision = Revision.find(session[:curRev])
-    end
     
     layers = ActiveSupport::JSON.decode(params[:layers])
 
     # create the new revision
     rev = Revision.new
     rev.title = params[:title]
-    if (@revision)
+    rev.user = @user
+    if (@revision) # set parent revision
       rev.revision_id = @revision.id
     end
-    rev.save
+    rev.save!
 
     # save each layer 
     layers.each do |layer| 
-      id = layer["id"]
-      z = layer["zorder"]
-      if (id == "backCanvas")
+      if (layer["id"] == "backCanvas")
         name = "thumb"
-        fullpath = "/images/" + rev.id.to_s + "-thumb.png"
       else 
         name = layer["name"]
-        fullpath = "/images/" + rev.id.to_s + "-" + z + ".png"
       end
       
-      File.open("public" + fullpath, "wb") do |f| 
-              f.write(Base64.decode64(layer["filepath"]))
-      end
-
       lr = Layer.new
-      lr.filepath = fullpath
+      lr.datapath = layer["filepath"]
       lr.revision = rev
       lr.name = name
-      lr.zorder = z
+      lr.zorder = layer["zorder"]
       lr.save
     end
 
     # save again here because we didn't know the rev id?
-    rev.save
+    rev.save!
    
     # update current revision
-    session[:curRev] = rev.id
+    @user.cur_revision = rev.id
     @revision = rev 
 
-    flash[:message] = "Commit successful"
+    flash[:notice] = "Commit successful"
     respond_to do |format| 
             format.js { render :layout => false }
     end 
@@ -94,7 +83,7 @@ class EditorController < ApplicationController
   def getJSONTree 
     @json = {:name => "Root", :children => []}
     # find all the top-level revisoins, then get their children
-    Revision.where("revision_id IS NULL").each do |rev|
+    Revision.where("revision_id IS NULL AND user_id = #{@user.id}").each do |rev|
       @json[:children] << revisionToJSON(rev)
     end
 
@@ -106,7 +95,7 @@ class EditorController < ApplicationController
 
   def getAllRevisions
     respond_to do |format|
-            format.js { render :layout => false, :text => Revision.all.to_json }
+            format.js { render :layout => false, :text => Revision.find_by_user_id(@user.id).to_json }
     end
   end
 
