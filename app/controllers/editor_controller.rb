@@ -10,17 +10,23 @@ class EditorController < ApplicationController
   def set_user_from_session
           if (@user.nil?)
                   @user = User.find(session[:user])
-                  if (@user.cur_revision)
+                  if (@user.cur_revision && @user.cur_revision != 0)
                     @revision = Revision.find(@user.cur_revision)
                   end
           end
   end
 
   def index
-    if (params[:id] && params[:id] != "0")
-            @user.cur_revision = params[:id] 
-            @revision = Revision.find(@user.cur_revision)
-            @user.save!
+    if (params[:id])
+      if (params[:id] != "0")
+        @user.cur_revision = params[:id] 
+        @revision = Revision.find(@user.cur_revision)
+        @user.save!
+      else
+        @user.cur_revision = nil
+        @revision = nil
+        @user.save!
+      end
     end
   end
 

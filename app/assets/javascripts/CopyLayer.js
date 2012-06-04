@@ -54,7 +54,7 @@ CopyLayerDialog.prototype.chooseLayer = function(rev) {
 
       name = layers[i].name == "thumb"? "flattened" : layers[i].name;
 
-      $("<span>").html(name).appendTo($(section));
+      $("<label>").html(name).attr('for', 'radio_layer_'+layers[i].id).appendTo($(section));
       $('<img src="'+ layers[i].filepath + '"/>')
           .width(100)
           .appendTo(section);
