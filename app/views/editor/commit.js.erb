@@ -1,6 +1,0 @@
-<% if flash[:error].nil? %>
-       $('#message').html("<%= flash[:notice] %>");
-<% else %>
-        $('#message').html("<%= flash[:error] %>");
-<% end %>
-setTimeout(function() { $('#message').html(""); }, 5000);
