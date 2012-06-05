@@ -507,10 +507,12 @@ public:
     Spectrum sigma_a() const { return sig_a; }
     Spectrum sigma_prime_s() const { return sigp_s; }
 	Spectrum multiplier() const { return mult; }
+public: 
+	Spectrum mult;
 private:
     // BSSRDF Private Data
     float e;
-    Spectrum sig_a, sigp_s, mult;
+    Spectrum sig_a, sigp_s;
 };
 
 

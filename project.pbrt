@@ -1,0 +1,55 @@
+#Film "image" "integer xresolution" [900] "integer yresolution" [900]
+Film "image" "integer xresolution" [300] "integer yresolution" [300]
+    "string filename" "project.exr"
+
+
+Scale -1 1 1
+LookAt 18 5.5 2    15.5 .9 10   0 1 0
+Camera "perspective" "float fov" [40]
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [4] #[16]
+PixelFilter "box"
+
+SurfaceIntegrator "dipolesubsurface" "float minsampledistance" [.1]
+    "float maxerror" [.05]
+
+WorldBegin
+
+# lights
+
+AttributeBegin
+Rotate 90 1 0 0 
+    LightSource "infinite" "color L" [8 8 8] "integer nsamples" [4] #[16] 
+        "string mapname" ["textures/grace_latlong.exr"]#skylight-sunset.exr"]
+        #"string mapname" ["textures/skylight-sunset.exr"]
+AttributeEnd
+
+#floor
+Texture "tmap" "color" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
+Texture "tbump-tex" "float" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
+Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float  tex2" [-.25]
+Material "substrate" "texture Kd" "tmap" 
+	 "color Ks" [.5 .5 .5] "float uroughness" [.05]
+	"float vroughness" [.05]
+	"texture bumpmap" "sbump" 
+Translate 15 0 10
+Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
+    "point P" [ -10 0 -10  10 0 -10   10 0 10   -10 0 10 ]
+
+AttributeBegin
+#Material "subsurface" "color sigma_a" [ .0001 .01 .01]
+#    "color sigma_prime_s" [3 3 3]
+Material "kdsubsurface" "color Kd" [.9 .9 .0] "float meanfreepath" [.7] "color Kr" [.9 .9 .9]
+#Material "matte" "color Kd" [.8 .1 .1]
+#Translate 15 0 10
+#Scale 1.25 1.25 1.25
+#Include "geometry/room-teapot.pbrt"
+Scale 20 20 20
+Rotate 180 0 1 0
+Include "geometry/bunny.pbrt"
+AttributeEnd
+
+WorldEnd
+
+###################################
+

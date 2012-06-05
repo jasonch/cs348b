@@ -65,12 +65,30 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
+    assert(dgGeom.p.x == dgShading.p.x && dgGeom.p.y == dgShading.p.y);
+	//printf("dgGeom (%.3f, %.3f, %.3f)\n", dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
     float e = eta->Evaluate(dgShading);
     float mfp = meanfreepath->Evaluate(dgShading);
     Spectrum kd = Kd->Evaluate(dgShading).Clamp();
     Spectrum sigma_a, sigma_prime_s;
     SubsurfaceFromDiffuse(kd, mfp, e, &sigma_a, &sigma_prime_s);	
-    return BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
+
+    BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
+	// for now...
+	if (dgGeom.p.x > 16) {
+		float color[3] = {10.f, 0.f, 0.f};
+		bssrdf->mult = RGBSpectrum::FromRGB(color);
+	} else if (dgGeom.p.x > 15) {
+		float color[3] = {100.f, 100.f, 0.f};
+		bssrdf->mult = RGBSpectrum::FromRGB(color);
+	} else {
+		float color[3] = {10.f, 0.f, 0.f};
+		bssrdf->mult = RGBSpectrum::FromRGB(color);
+
+	}
+	return bssrdf;
+
+
 }
 
 
