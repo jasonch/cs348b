@@ -1,0 +1,88 @@
+// Place all the styles related to the editor controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+body {
+  position: relative;
+}
+
+
+.scribble a {
+  background-image: url(../wymeditor/skins/default/icons.png);
+
+}
+
+.lightbox {
+  position: absolute;
+  border: blue solid 2px;
+  padding: 10px;
+  min-width: 200px;
+  background: white;
+  z-index: 10000;
+}
+
+.option {
+  text-decoration: none;
+  display: inline-block;
+  background-color: #444;
+  background-position: 0 0;
+  border-width: 0 0 0 1px;
+  border-style: solid;
+  border-color: silter;
+  text-align: left;
+  padding: 5px 10px;
+  font: bold 20px Trebuchet MS, sans-serif;
+  color: white;
+  text-shadow: white 0 0 1px;
+  cursor: pointer;
+}
+
+input[disabled] {
+  background-color: #888;
+  color: #444;
+}
+
+#optionsPane a.selected {
+  background: #ffff88;
+  color: black;
+}
+
+
+.layersPane {
+  display: inline-block;
+  width: 200px;
+  padding: 10px 0px;
+}
+
+#myCanvas {
+}
+
+#backCanvas {
+  display: none;
+}
+
+#canvasWrapper {
+  display:inline-block;
+  width: 800px;
+  height: 600px;
+  position: relative;
+}
+
+.canvas {
+  border: 1px black solid;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#floatingImage {
+  position: absolute;
+  padding: 5px;
+  border: 1px dashed gray;
+  z-index: 10000;
+}
+
+.dragItem {
+  padding: 5px 10px;
+  border: dotted 1px gray;
+}

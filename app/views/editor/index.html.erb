@@ -1,0 +1,107 @@
+<%
+   if (@revision.nil?)
+     title = ""
+     layers = nil
+   else 
+     title = @revision.title 
+     layers = @revision.layers.select{|l| l.name != 'thumb'}
+   end
+%>
+
+  <script type='text/javascript'>
+    var EMPTYFUNC = function(){};
+    var EditorStates = {};
+    EditorStates.strokeWidth = 1;
+    $("body").ready(function () {
+      EditorStates.options = [
+        { name: "new",
+          title: "New",
+          onclick: function() { 
+            window.location.href = "<%= url_for :only_path => false, :action => 'index', :id => 0 %>";
+          }
+        },
+        { name: "color",
+          title: "Color",
+          onclick: EMPTYFUNC 
+        },
+        { name: "thickness",
+          title: "Line Width",
+          onclick: showLineWidthBox
+        },
+        { name: "scribble",
+          title: "Scribble",
+          onclick: function() { changeTool(new Scribble(myCanvas));},
+        },
+        { name: "path",
+          title: "Path",
+          onclick: function() { changeTool(new Path(myCanvas));},
+        },
+        /*
+        { name: "ellipse",
+          title: "Ellipse",
+          onclick: function() {changeTool("ellipse"); },
+          mousedown: EMPTYFUNC,
+          mousemove: EMPTYFUNC,
+          mouseup: EMPTYFUNC
+
+        },
+        */
+        { name: "image",
+          title: "Image",
+          onclick: showImageURLBox 
+        },
+        { name: "undo",
+          title: "Undo",
+          onclick: undo
+        },
+        { name: "clear",
+          title: "Clear",
+          onclick: function() { clearCanvas(); }
+        },
+        { name: "copylayer",
+          title: "Copy From Layer",
+          onclick: showCopyLayerDialog
+        }];
+        initCanvasEvents();
+
+        $('#option_color').ColorPicker({
+          color: '#0000ff',
+          onSubmit: function (hsb, hex, rgb, el) {
+            $(el).val(hex);
+            EditorStates.stroke = hex;
+          },
+          onBeforeShow: function () { if(this.value != undefined) $(this).ColorPickerSetColor(this.value); },
+          onHide: function(hsb, hex, rgb, el) {
+            $(el).val(hex);
+            $('.colorpicker_submit').click();
+          }
+        });
+        <% if @revision.nil? %>
+          EditorStates.curCanvas = "canvas_1";
+        <% else %>
+          EditorStates.curCanvas = "canvas_<%= layers.sort{|a,b| b[:zorder] <=> a[:zorder]}[0].id %>";
+        <% end %>
+    });
+  </script>
+
+<%= label_tag "revTitle", "Title: "%> <%= text_field_tag "revTitle", title %>
+<div id='optionsPane'>
+</div>
+<div id='layersPane'>
+<%= #render :partial => 'layersPane', :locals => {:rev => @revision } 
+%>
+</div>
+<div id='canvasWrapper'>
+<% if @revision.nil? %>
+   <%= render :partial => "canvasLayer", :locals => {:layer => nil } %>
+<% else %>
+  <% layers.each do |lr| %>
+    <%= render :partial => "canvasLayer", :locals => {:layer => lr  } %>
+  <% end %>
+<% end %>
+<canvas id='backCanvas' class='canvas' width='800' height='600'> </canvas>
+</div>
+<div class='actionPane'>
+<%= button_to_function "Commit", 'commit();', :id=>'commitBtn', :class => 'option' %> 
+<%= button_to_function "Timeline", 'viewTimeline("'+url_for(:action=>'viewTree') + '");', :id=>'timelineBtn', :class => 'option' %> 
+</div>

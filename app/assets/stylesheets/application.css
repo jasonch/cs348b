@@ -1,0 +1,130 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+*/
+
+body {
+  position: relative;
+}
+
+#thumbnail {
+  position: absolute;
+  z-index: 100;
+  background: white;
+  padding: 10px;
+  border: 1px solid black;
+  display: none;
+}
+
+.thumbnail {
+  position: absolute;
+  z-index: 100;
+  background: white;
+  padding: 10px;
+  min-width: 100px;
+  border: 1px solid black;
+}
+
+.buttons {
+	color: red;
+
+}
+
+body {
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+    width: 100%;
+	height: auto;
+	text-align: center;
+	/*background-image:url(http://www.silverlight.net/content/samples/sl2/silverlightairlines/run/Images/Background.jpg);*/
+	background-image:url(/images/Background.jpg);
+	background-repeat:no-repeat;
+	background-size:cover;
+	
+	}
+
+h1 {
+	font-family: Verdana, sans-serif;
+	color: #659EC7;
+}
+
+canvas
+{
+	background-color: white;
+	border-radius: 5px;
+}
+
+#options
+{
+	display: none;
+}
+
+.options
+{
+	display: none;
+}
+
+.actionPane
+{
+	font-family: Verdana, sans-serif;
+	position: relative; left:35%;
+	text-align: center;
+	width: 30%;
+}
+
+table
+{
+	text-align: center;
+	width: 100%;
+	position: relative;
+	float: left;
+	
+}
+
+
+td
+{
+ border: 2px solid white;
+ border-radius: 10px;
+ padding: 0px;
+}
+
+#space
+{
+	border: none;
+	padding: 2px;
+}
+
+#commit
+{
+	float: left;
+	width: 100%; 
+	position: relative;
+
+}
+
+#timline
+{
+	position: relative;
+	float: left;
+	border: 1px solid black;
+
+}
+
+#message {
+  font-size: 24px;
+  line-height: 36px;
+  background-color: yellow;
+  color: red;
+  border-top: 1px dotted red;
+}
