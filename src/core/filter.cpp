@@ -28,6 +28,7 @@
 
 // Filter Method Definitions
 Filter::~Filter() {
+
 }
 
 
