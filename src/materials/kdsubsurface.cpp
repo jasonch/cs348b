@@ -79,7 +79,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 		float color[3] = {10.f, 0.f, 0.f};
 		bssrdf->mult = RGBSpectrum::FromRGB(color);
 	} else if (dgGeom.p.x > 15) {
-		float color[3] = {100.f, 100.f, 0.f};
+		float color[3] = {40.f, 40.f, 0.f};
 		bssrdf->mult = RGBSpectrum::FromRGB(color);
 	} else {
 		float color[3] = {10.f, 0.f, 0.f};
