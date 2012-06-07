@@ -184,11 +184,15 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	int k = (int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1;
 	//std::cout << p_obj.x << " " << p_obj.y << " " << p_obj.z << std::endl;
 	//std::cout << i << " " << j << " " << k << std::endl;
-	double temp = tempdist[i][j][k];
+	double temp = tempdist[i][j][k] * 200.0f;
+	float vals[3] = {0.0f, 0.0f, 0.0f};
+	if(temp > 100.0f){
+		float rgb[3] = {700, 530, 470};
+		Blackbody(rgb, 3, temp, vals);
+		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
+	}
 
-	float color[3] = {0.0f, 0.0f, 0.0f};
-	color[0] = temp/2.0f;
-	bssrdf->mult = RGBSpectrum::FromRGB(color);
+	bssrdf->mult = RGBSpectrum::FromRGB(vals);
 
 	/*
 	// for now...
