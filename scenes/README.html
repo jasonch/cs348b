@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html lang="en">
+<head>
+<title>pbrt-v2 Example Scenes</title>
+</head>
+<body>
+
+<table cellspacing="4">
+
+<tr><td><a href="readme_images/anim-bluespheres.jpg"><img src="readme_images/thumb_anim-bluespheres.jpg"></a></td><td>
+<tt>anim-bluespheres.pbrt</tt>:
+This simple scene demonstrates the new motion blur feature added
+to <tt>pbrt-v2</tt>, showing three spheres above a mirror, rotating at
+different speeds.
+</td></tr>
+
+<tr><td><a href="readme_images/anim-killeroos-moving.jpg"><img src="readme_images/thumb_anim-killeroos-moving.jpg"></a></td><td>
+<tt>anim-killeroos-moving.pbrt</tt>: Another simple animation example; note
+that both the killeroos and their shadows are blurred.  (Killeroo model
+courtesy of <a href="http://www.headus.com/au/">headus</a>/Rezard.)
+</td></tr>
+ 
+<tr><td><a href="readme_images/arcsphere.jpg"><img src="readme_images/thumb_arcsphere.jpg"></a></td><td>
+<tt>arcsphere.pbrt</tt>: this model is one of the samples that comes with
+the procedural modeling
+system <a href="http://structuresynth.sourceforge.net/">Structure
+  Synth</a>.  It is rendered here using the ambient occlusion integrator.
+The model was exported to the <tt>pbrt</tt> format using the exporter in
+the <tt>exporters/structuresynth</tt> directory of the <tt>pbrt</tt> source
+code distribution.
+</td></tr>
+
+<tr><td><a href="readme_images/ballpile.jpg"><img src="readme_images/thumb_ballpile.jpg"></a></td><td>
+<tt>ballpile.pbrt</tt>: this model was also generated
+  by <a href="http://structuresynth.sourceforge.net/">Structure 
+  Synth</a> and was exported with the <tt>pbrt</tt> exporter.  Here,
+  subsurface scattering is used for rendering the balls.
+</td></tr>
+
+<tr><td><a href="readme_images/buddha.jpg"><img src="readme_images/thumb_buddha.jpg"></a></td><td>
+<tt>buddha.pbrt</tt>: The "Happy Buddha" model (courtesy of the
+<a href="http://graphics.stanford.edu/data/3Dscanrep/">Stanford 3D Scanning
+   Repository</a>) is rendered with a realistic copper metal model.
+</td></tr>
+
+<tr><td><a href="readme_images/buddhamesh.jpg"><img src="readme_images/thumb_buddhamesh.jpg"></a></td><td>
+<tt>buddhamesh.pbrt</tt>: In a clever example of object instancing
+(and recursion), Guillermo M. Leal Llaguno
+of <a href="http://www.evvisual.com/">Evolución Visual</a> created a
+representation of the "happy buddha" out of hundreds of scaled-down
+instances of the happy buddha model.
+</td></tr>
+
+<tr><td><a href="readme_images/bump-sphere.jpg"><img src="readme_images/thumb_bump-sphere.jpg"></a></td><td>
+<tt>bump-sphere.pbrt</tt>: sphere, rendered with bump mapping.
+</td></tr>
+
+<tr><td><a href="readme_images/bunny.jpg"><img src="readme_images/thumb_bunny.jpg"></a></td><td>
+<tt>bunny.pbrt</tt>: bunny model
+(courtesy of the
+<a href="http://graphics.stanford.edu/data/3Dscanrep/">Stanford 3D Scanning
+   Repository</a>), rendered with a paint BRDF measured by the <a href="http://www.graphics.cornell.edu/online/measurements/reflectance/carpaints/index.html">Cornell
+   Graphics Lab</a>.
+</td></tr>
+
+<tr><td><a href="readme_images/caustic-proj.jpg"><img src="readme_images/thumb_caustic-proj.jpg"></a></td><td>
+<tt>caustic-proj.pbrt</tt>: image projected using the projection light
+source through a glass sphere, casting a caustic on the ground beneath it.
+</td></tr>
+
+<tr><td><a href="readme_images/city-ao.jpg"><img src="readme_images/thumb_city-ao.jpg"></a></td><td>
+<tt>city-ao.pbrt</tt>: city 
+modeled by Mark Schafer using the procedural modeling
+system <a href="http://structuresynth.sourceforge.net/">Structure
+  Synth</a>, rendered with the ambient occlusion integrator.
+</td></tr>
+
+<tr><td><a href="readme_images/city-env.jpg"><img src="readme_images/thumb_city-env.jpg"></a></td><td>
+<tt>city-env.pbrt</tt>: city 
+modeled by Mark Schafer using the procedural modeling
+system <a href="http://structuresynth.sourceforge.net/">Structure
+  Synth</a>, rendered with an environment map light source.
+</td></tr>
+
+<tr><td><a href="readme_images/cornell-mlt.jpg"><img src="readme_images/thumb_cornell-mlt.jpg"></a></td><td>
+<tt>cornell-mlt.pbrt</tt>: Cornell box, rendered using Metropolis light transport.
+</td></tr>
+
+<tr><td><a href="readme_images/dof-dragons.jpg"><img src="readme_images/thumb_dof-dragons.jpg"></a></td><td>
+<tt>dof-dragons.pbrt</tt>: series of dragon models, illustrating depth of
+field.
+(Dragon model courtesy of the
+<a href="http://graphics.stanford.edu/data/3Dscanrep/">Stanford 3D Scanning
+   Repository</a>).
+</td></tr>
+
+<tr><td><a href="readme_images/killeroo-glossy-prt.jpg"><img src="readme_images/thumb_killeroo-glossy-prt.jpg"></a></td><td>
+<tt>killeroo-glossy-prt.pbrt</tt>: killeroo model rendered with glossy
+precomputed radiance transfer integrator.  (Model courtesy <a href="http://www.headus.com/au/">headus</a>/Rezard.)
+</td></tr>
+
+<tr><td><a href="readme_images/killeroo-gold.jpg"><img src="readme_images/thumb_killeroo-gold.jpg"></a></td><td>
+<tt>killeroo-gold.pbrt</tt>: killeroo rendered with realistic gold metal
+material (model courtesy <a href="http://www.headus.com/au/">headus</a>/Rezard.)
+</td></tr>
+
+<tr><td><a href="readme_images/killeroo-simple.jpg"><img src="readme_images/thumb_killeroo-simple.jpg"></a></td><td>
+<tt>killeroo-simple.pbrt</tt>: simple scene with killeroo models.
+(Model courtesy <a href="http://www.headus.com/au/">headus</a>/Rezard.)
+</td></tr>
+
+<tr><td><a href="readme_images/metal-ssynth.jpg"><img src="readme_images/thumb_metal-ssynth.jpg"></a></td><td>
+<tt>metal-ssynth.pbrt</tt>: set of blocks with a realistic metal material.
+This model is an example from the the procedural modeling
+system <a href="http://structuresynth.sourceforge.net/">Structure
+Synth</a>, exported with the <tt>pbrt</tt> exporter.
+</td></tr>
+
+<tr><td><a href="readme_images/microcity.jpg"><img src="readme_images/thumb_microcity.jpg"></a></td><td>
+<tt>microcity.pbrt</tt>: city modeled by Mark Schafer using the procedural
+modeling system <a href="http://structuresynth.sourceforge.net/">Structure
+Synth</a>, rendered with the ambient occlusion integrator and depth of
+field to give a sense of (small) scale.
+</td></tr>
+
+<tr><td><a href="readme_images/miscquads.jpg"><img src="readme_images/thumb_miscquads.jpg"></a></td><td>
+<tt>miscquads.pbrt</tt>: various quadrilateral shapes--paraboloid, 
+hyperboloid, and cone--rendered with a texture that illustrates their parameterizations.
+</td></tr>
+
+<tr><td><a href="readme_images/plants-dusk.jpg"><img src="readme_images/thumb_plants-dusk.jpg"></a></td><td>
+<tt>plants-dusk.pbrt</tt>: complex ecosystem model, rendered with an
+environment map simulating illumination at dusk.  (Model form Deussen et
+al. <a href="http://portal.acm.org/citation.cfm?id=280898">Realistic
+  modeling and rendering of plant ecosystems</a>.)
+</td></tr>
+
+<tr><td><a href="readme_images/plants-godrays.jpg"><img src="readme_images/thumb_plants-godrays.jpg"></a></td><td>
+<tt>plants-godrays.pbrt</tt>: complex ecosystem model, rendered with
+atmospheric scattering leading to beams of light.  (Model form Deussen et
+al. <a href="http://portal.acm.org/citation.cfm?id=280898">Realistic
+  modeling and rendering of plant ecosystems</a>.)
+</td></tr>
+
+<tr><td><a href="readme_images/probe-cornell.jpg"><img src="readme_images/thumb_probe-cornell.jpg"></a></td><td>
+<tt>probe-cornell.pbrt</tt>: Cornell box scene, rendered using a grid of
+irradiance probes projected into spherical harmonics.
+</td></tr>
+
+<tr><td><a href="readme_images/room-igi.jpg"><img src="readme_images/thumb_room-igi.jpg"></a></td><td>
+<tt>room-igi.pbrt</tt>: simple scene of a room with teapots with a variety
+of reflection models, rendered using the "instant global illumination"
+algorithm.  Most of the illumination in this scene is indirect; the illumination
+on the back wall is the only direct lighting.
+</td></tr>
+
+<tr><td><a href="readme_images/room-mlt.jpg"><img src="readme_images/thumb_room-mlt.jpg"></a></td><td>
+<tt>room-mlt.pbrt</tt>: room with teapots scene, rendered with Metropolis
+light transport.
+</td></tr>
+
+<tr><td><a href="readme_images/room-path.jpg"><img src="readme_images/thumb_room-path.jpg"></a></td><td>
+<tt>room-path.pbrt</tt>: room with teapots scene, rendered with path tracing.
+</td></tr>
+
+<tr><td><a href="readme_images/room-photon-nogather.jpg"><img src="readme_images/thumb_room-photon-nogather.jpg"></a></td><td>
+<tt>room-photon-nogather.pbrt</tt>: room with teapots scene, rendered using
+photon mapping but not final gathering.  Note the spolotchy artifacts from
+using the photons directly.
+</td></tr>
+
+<tr><td><a href="readme_images/room-photon.jpg"><img src="readme_images/thumb_room-photon.jpg"></a></td><td>
+<tt>room-photon.pbrt</tt>: room with teapots scene, rendered with photon
+mapping and final gathering.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel.jpg"><img src="readme_images/thumb_sanmiguel.jpg"></a></td><td>
+<tt>sanmiguel.pbrt</tt>: this scene
+was modeled
+by Guillermo M. Leal Llaguno
+of <a href="http://www.evvisual.com/">Evolución Visual</a>,
+based on a hacienda that he visited in San
+Miguel de Allende, Mexico.  The scene was modeled in <i>3ds max</i> and
+exported to the <tt>pbrt</tt> file format with a custom script written by
+Guillermo.  The scene features just over 2.5 million unique triangles and
+has a total geometric complexity of 10.7 million triangles due to the use
+of object instancing; the <tt>pbrt</tt> files that describe the scene geometry
+require 620 MB of on-disk storage.  There are a total of 354 texture maps,
+representing 293 MB of texture data.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam1.jpg"><img src="readme_images/thumb_sanmiguel_cam1.jpg"></a></td><td>
+<tt>sanmiguel_cam1.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam3.jpg"><img src="readme_images/thumb_sanmiguel_cam3.jpg"></a></td><td>
+<tt>sanmiguel_cam3.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam4.jpg"><img src="readme_images/thumb_sanmiguel_cam4.jpg"></a></td><td>
+<tt>sanmiguel_cam4.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam5.jpg"><img src="readme_images/thumb_sanmiguel_cam5.jpg"></a></td><td>
+<tt>sanmiguel_cam5.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam6.jpg"><img src="readme_images/thumb_sanmiguel_cam6.jpg"></a></td><td>
+<tt>sanmiguel_cam6.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam14.jpg"><img src="readme_images/thumb_sanmiguel_cam14.jpg"></a></td><td>
+<tt>sanmiguel_cam14.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam15.jpg"><img src="readme_images/thumb_sanmiguel_cam15.jpg"></a></td><td>
+<tt>sanmiguel_cam15.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam18.jpg"><img src="readme_images/thumb_sanmiguel_cam18.jpg"></a></td><td>
+<tt>sanmiguel_cam18.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam20.jpg"><img src="readme_images/thumb_sanmiguel_cam20.jpg"></a></td><td>
+<tt>sanmiguel_cam20.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sanmiguel_cam25.jpg"><img src="readme_images/thumb_sanmiguel_cam25.jpg"></a></td><td>
+<tt>sanmiguel_cam25.pbrt</tt>: another view of the San Miguel scene.
+</td></tr>
+
+<tr><td><a href="readme_images/sibenik-igi.jpg"><img src="readme_images/thumb_sibenik-igi.jpg"></a></td><td>
+<tt>sibenik-igi.pbrt</tt>: Sibenik cathedral model, rendered using "instant
+global illumination".  Model courtesy of Marko Dabrovic and Mihovil Odak.
+</td></tr>
+
+<tr><td><a href="readme_images/smoke-2.jpg"><img src="readme_images/thumb_smoke-2.jpg"></a></td><td>
+<tt>smoke-2.pbrt</tt>: volumetric smoke dataset, rendered with the
+single-scattering volume integrator.  (Dataset courtesy Duc Nguyen and Ron
+Fedkiw).
+</td></tr>
+
+<tr><td><a href="readme_images/sphere-ewa-vs-trilerp.jpg"><img src="readme_images/thumb_sphere-ewa-vs-trilerp.jpg"></a></td><td>
+<tt>sphere-ewa-vs-trilerp.pbrt</tt>: sphere with high-frequency texture
+map.  Left: rendered with elliptical weighted average (EWA) filtering algorithm,
+right: rendered with trilinear MIP-mapping.  Note how EWA is substantially
+more effective at resolving fine detail in the texture.
+</td></tr>
+
+<tr><td><a href="readme_images/spheres-differentials-texfilt.jpg"><img src="readme_images/thumb_spheres-differentials-texfilt.jpg"></a></td><td>
+<tt>spheres-differentials-texfilt.pbrt</tt>: glass (left) and mirror
+(right) spheres, reflecting high-frequency texture map.  Thanks to texture
+filtering with ray differentials, the reflections of the texture are
+anti-aliased well.
+</td></tr>
+
+<tr><td><a href="readme_images/sponza-fog.jpg"><img src="readme_images/thumb_sponza-fog.jpg"></a></td><td>
+<tt>sponza-fog.pbrt</tt>: Sponza model rendered with scattering volumetric
+fog. Model courtesy of Marko Dabrovic and Mihovil Odak.
+</td></tr>
+
+<tr><td><a href="readme_images/sponza-phomap.jpg"><img src="readme_images/thumb_sponza-phomap.jpg"></a></td><td>
+<tt>sponza-phomap.pbrt</tt>: Sponza model rendered with photon mapping.
+Model courtesy of Marko Dabrovic and Mihovil Odak.
+</td></tr>
+
+<tr><td><a href="readme_images/spotfog.jpg"><img src="readme_images/thumb_spotfog.jpg"></a></td><td>
+<tt>spotfog.pbrt</tt>: spotlight shining through a scattering medium.  The
+sphere casts a volumetric shadow.
+</td></tr>
+
+<tr><td><a href="readme_images/teapot-area-light.jpg"><img src="readme_images/thumb_teapot-area-light.jpg"></a></td><td>
+<tt>teapot-area-light.pbrt</tt>: simple scene with a teapot illuminated by
+a disk area light source.
+</td></tr>
+
+<tr><td><a href="readme_images/teapot-cornell-brdf.jpg"><img src="readme_images/thumb_teapot-cornell-brdf.jpg"></a></td><td>
+<tt>teapot-cornell-brdf.pbrt</tt>: teapot rendered with a realistic paint
+BRDF measured by
+the <a href="http://www.graphics.cornell.edu/online/measurements/reflectance/carpaints/index.html">Cornell Graphics Lab</a>.
+</td></tr>
+
+<tr><td><a href="readme_images/teapot-metal.jpg"><img src="readme_images/thumb_teapot-metal.jpg"></a></td><td>
+<tt>teapot-metal.pbrt</tt>: teapot with measured gold metal material.
+</td></tr>
+
+<tr><td><a href="readme_images/teapot-subsurface.jpg"><img src="readme_images/thumb_teapot-subsurface.jpg"></a></td><td>
+<tt>teapot-subsurface.pbrt</tt>: teapot exhibiting subsurface scattering.
+</td></tr>
+
+<tr><td><a href="readme_images/tt.jpg"><img src="readme_images/thumb_tt.jpg"></a></td><td>
+<tt>tt.pbrt</tt>: Audi TT car model, illuminated with environment map 
+light source. 
+Model courtesy of Marko Dabrovic and Mihovil Odak.
+</td></tr>
+
+<tr><td><a href="readme_images/villa-daylight.jpg"><img src="readme_images/thumb_villa-daylight.jpg"></a></td><td>
+<tt>villa-daylight.pbrt</tt>: modern villa scene during daytime, rendered
+using Metropolis light transport.  This is an extremely difficult model
+to render for many light transport algorithms: because almost all 
+illumination passes through one or more glass windows before illuminating
+the interior, traditional efficient direct lighting techniques aren't
+useful for this scene.
+Model courtesy of <a href="http://florentboyer.com">Florent Boyer</a>.
+</td></tr>
+
+<tr><td><a href="readme_images/villa-igi.jpg"><img src="readme_images/thumb_villa-igi.jpg"></a></td><td>
+<tt>villa-igi.pbrt</tt>: modern villa scene at night-time, rendered using
+the "instant global illumination" integrator.  Model courtesy
+of <a href="http://florentboyer.com">Florent Boyer</a>
+</td></tr>
+
+<tr><td><a href="readme_images/villa-lights-on.jpg"><img src="readme_images/thumb_villa-lights-on.jpg"></a></td><td>
+<tt>villa-lights-on.pbrt</tt>: another view of
+of <a href="http://florentboyer.com">Florent Boyer</a>'s modern villa at
+night time, also rendered using instant global illumination.
+</td></tr>
+
+<tr><td><a href="readme_images/villa-photons.jpg"><img src="readme_images/thumb_villa-photons.jpg"></a></td><td>
+<tt>villa-photons.pbrt</tt>: modern villa scene
+Model courtesy of <a href="http://florentboyer.com">Florent Boyer</a>,
+rendered using photon mapping for indirect lighting.
+</td></tr>
+
+<tr><td><a href="readme_images/yeahright.jpg"><img src="readme_images/thumb_yeahright.jpg"></a></td><td>
+<tt>yeahright.pbrt</tt>:
+<a href="http://www.cs.caltech.edu/~keenan/models.html">Keenan
+  Crane</a>'s interesting <i>yeah, right</i> model, rendered using a
+  realistic silver metal model.  It is reflected by a material that is a
+  realistic model of aluminum and rendered with Metropolis light transport.
+</td></tr>
+
+
+</table>
+</body>
+</html>

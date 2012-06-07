@@ -1,0 +1,81 @@
+Scale -1 1 1 
+
+Film "image"
+	"integer xresolution" [1600] "integer yresolution" [800]
+    "string filename" "plants-dusk.exr"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [32]
+PixelFilter "box"
+
+SurfaceIntegrator "directlighting"
+
+VolumeIntegrator "emission" "float stepsize" [16]
+
+# top view
+#LookAt 50 50 90   50 50 0 0 1 0
+
+# normal view
+LookAt 28 1.8 1.5   69 65 1.3  0 0 1
+#LookAt 37 1.7 1.4    45 40 1.5 0 0 1
+
+# standing way back
+#LookAt 33 -50 40  50 50 1 0 0 1
+
+Camera "perspective" "float fov" [60]
+#	"float focaldistance" [17] 
+#	"float lensradius" [.025] 
+#Camera "environment"
+
+WorldBegin
+
+AttributeBegin
+
+Material "mirror"
+Texture "water" "float" "windy" #"float scale" [.1]
+Material "mirror" "color Kr" [.7 .7 .7] "texture bumpmap" "water"
+Translate 0 0 -.01
+Shape "trianglemesh" "point P" [0 0 .01    100 0 .01  100 100 .01  0 100 .01 ]
+	"integer indices" [ 0 1 2 2 3 0 ]
+AttributeEnd
+
+AttributeBegin
+Scale 1 1 -1
+Rotate -90 1 0 0 
+#Volume "exponential" "float a" .5 "float b" .9
+Volume "exponential" "float a" .25 "float b" .3
+# good for single
+ 	"color sigma_a" [ .1 .1 .1 ]
+ 	"color sigma_s" [ .2 .2 .2 ]
+	"color Le" [ .05 .05 .05]
+	"point p0" [-100 -3 -100 ] "point p1" [100 100 30 ]
+AttributeEnd
+
+
+AttributeBegin
+Rotate 320 0 0 1 
+LightSource "infinite" "integer nsamples" [4]
+	"string mapname" ["textures/skylight-dusk.exr"  ]
+AttributeEnd
+
+AttributeBegin
+AreaLightSource "area" "color L" [900 800 720 ]
+ReverseOrientation
+Translate 400 200 800 # -500 1300 # 200 800
+Rotate 90 0 0 1
+Rotate 90 1 0 0
+#Shape "disk" "float radius" [100]
+AttributeEnd
+
+
+Include "geometry/ecosys/ecosys-texture.pbrt"
+
+Include "geometry/ecosys/ecosys-apple.pbrt"
+Include "geometry/ecosys/ecosys-bush.pbrt"
+Include "geometry/ecosys/ecosys-dandelion.pbrt"
+Include "geometry/ecosys/ecosys-grass.pbrt"
+Include "geometry/ecosys/ecosys-urtica.pbrt"
+Include "geometry/ecosys/ecosys-yellowflower.pbrt"
+
+Include "geometry/ecosys/ecosys-terrain.pbrt"
+
+WorldEnd

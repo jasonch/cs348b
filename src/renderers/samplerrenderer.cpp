@@ -38,6 +38,9 @@
 #include "camera.h"
 #include "intersection.h"
 
+
+
+
 static uint32_t hash(char *key, uint32_t len)
 {
     uint32_t   hash, i;
@@ -52,8 +55,12 @@ static uint32_t hash(char *key, uint32_t len)
     return hash;
 } 
 
+
+
 // SamplerRendererTask Definitions
 void SamplerRendererTask::Run() {
+	
+
     PBRT_STARTED_RENDERTASK(taskNum);
     // Get sub-_Sampler_ for _SamplerRendererTask_
     Sampler *sampler = mainSampler->GetSubSampler(taskNum, taskCount);

@@ -33,7 +33,6 @@
 #include "paramset.h"
 #include "camera.h"
 
-
 // PhotonIntegrator Local Declarations
 struct Photon {
     Photon(const Point &pp, const Spectrum &wt, const Vector &w)
@@ -620,7 +619,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
     L += isect.Le(wo);
-
+	
     // Evaluate BSDF at hit point
     BSDF *bsdf = isect.GetBSDF(ray, arena);
     const Point &p = bsdf->dgShading.p;

@@ -1,0 +1,110 @@
+# Gtool Exporter Ver. 1.00 for pbrt v2.0 Render, www.pbrt.org 
+# Created by Guillermo M. Leal LLaguno,  g.llaguno@evvisual.com,  www.evvisual.com 
+# Exported on: 12/22/2009 12:15:01 AM 
+
+Scale -1 1 1  # account for fixed lookat bug... 
+
+# Camera Camera04
+LookAt 4.42961 -1.89153 6.75331
+		 5.40206 -1.65858 6.74488
+		 0.00819354 0.00196274 0.999965
+
+Camera "perspective" 
+	 "float fov" [65.4705] 
+	 "float shutteropen" [0.0] 
+	 "float shutterclose" [1.0] 
+	 "float lensradius" [0.0] 
+	 "float focaldistance" [1e+006] 
+
+Film "image" 
+	 "integer xresolution"  [363]
+	 "integer yresolution"  [800]
+	 "float cropwindow"  [0.0  0.997245  0.0625  0.8375]
+	 "string filename"  ["sanmiguel_cam4.exr"]
+# End Camera Camera04
+
+
+Sampler "lowdiscrepancy" 
+	 "integer pixelsamples" [30] 
+
+SurfaceIntegrator "directlighting" 
+	 "integer maxdepth" [8.0] 
+
+VolumeIntegrator "single" 
+	 "float stepsize" [1.0] 
+
+Renderer "metropolis" 
+	 "float largestepprobability" [0.25] 
+	 "integer samplesperpixel" [1024] 
+	 "integer bootstrapsamples" [100000] 
+	 "integer directsamples" [128] 
+	 "bool dodirectseparately" ["true"] 
+	 "integer maxconsecutiverejects" [512] 
+	 "integer maxdepth" [9] 
+
+ Accelerator "bvh" 
+
+
+WorldBegin
+
+
+# Enviorment 
+
+AttributeBegin 
+Rotate 198.0 0 0 1
+LightSource "infinite" 
+"integer nsamples" [32]
+"color scale" [14.0 14.0 14.0]
+	"string mapname" ["textures/sanmiguel/RenoSuburb01_sm.exr"]
+AttributeEnd 
+
+# ***** Lights ***** 
+
+# ***** End  Lights *****
+
+#Main File
+Include "geometry/sanmiguel/sanmiguel-mat.pbrt" 
+Include "geometry/sanmiguel/sanmiguel-geom.pbrt" 
+
+#Trees
+Include "geometry/sanmiguel/arbol-mat.pbrt" 
+Include "geometry/sanmiguel/troncoA-geom.pbrt" 
+Include "geometry/sanmiguel/troncoB-geom.pbrt" 
+#Trees Leaves
+
+Include "geometry/sanmiguel/hojas_a1-geom.pbrt"   	# tapa ventanas
+Include "geometry/sanmiguel/hojas_a2-geom.pbrt" 
+Include "geometry/sanmiguel/hojas_a3-geom.pbrt" 
+Include "geometry/sanmiguel/hojas_a4-geom.pbrt" 
+Include "geometry/sanmiguel/hojas_a5-geom.pbrt"  		# es arriba no se ve en cam9
+Include "geometry/sanmiguel/hojas_a6-geom.pbrt" 
+Include "geometry/sanmiguel/hojas_a7-geom.pbrt" 
+
+Include "geometry/sanmiguel/hojas_b2-geom.pbrt"  		# rama abajo atravezada
+Include "geometry/sanmiguel/hojas_b3-geom.pbrt" 
+Include "geometry/sanmiguel/hojas_b4-geom.pbrt" 		# rama abajo atravezada
+
+#Wall Ivy
+Include "geometry/sanmiguel/enredadera-mat.pbrt" 
+Include "geometry/sanmiguel/enredadera-geom.pbrt" 
+#Pots
+Include "geometry/sanmiguel/macetas-mat.pbrt" 
+Include "geometry/sanmiguel/macetas-geom.pbrt" 
+#Plants
+Include "geometry/sanmiguel/plantas-mat.pbrt" 
+Include "geometry/sanmiguel/plantas-geom.pbrt" 
+
+#Tables Downstairs
+Include "geometry/sanmiguel/mesas_abajo-mat.pbrt" 
+Include "geometry/sanmiguel/mesas_abajo-geom.pbrt" 
+#Tables Upstairs
+Include "geometry/sanmiguel/mesas_arriba-mat.pbrt" 
+Include "geometry/sanmiguel/mesas_arriba-geom.pbrt" 
+#Table Downstairs open space
+Include "geometry/sanmiguel/mesas_patio-mat.pbrt" 
+Include "geometry/sanmiguel/mesas_patio-geom.pbrt" 
+#Silverware
+Include "geometry/sanmiguel/platos-mat.pbrt" 
+Include "geometry/sanmiguel/platos-geom.pbrt" 
+
+WorldEnd

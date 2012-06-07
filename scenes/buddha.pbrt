@@ -1,0 +1,42 @@
+
+Film "image" 
+	"integer xresolution" [600] "integer yresolution" [1200] 
+"string filename" "buddha.exr"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [8]
+PixelFilter"box"
+
+LookAt 0 .2 .2    0 .11 0  0 1 0
+Scale -1 1 1
+Camera "perspective" "float fov" [36] 
+
+WorldBegin
+
+AttributeBegin
+   AreaLightSource "area" "color L" [ 1 1 1 ] "integer nsamples" [16]
+   Translate 0 2 0
+   Rotate 90 1 0 0
+#   Shape "disk" "float radius" [4.5]
+AttributeEnd
+
+AttributeBegin
+#Rotate -90 1 0 0 
+    LightSource "infinite" "integer nsamples" [16] "color L" [1 1 1]
+        "string mapname" ["textures/doge2_latlong.exr"]
+AttributeEnd
+
+AttributeBegin
+Material "matte" "color Kd" [.4 .42 .48]
+Shape "trianglemesh" "point P" [ -1 0 -1 1 0 -1 1 0 1 -1 0 1 ]
+	"integer indices" [ 0 1 2 2 3 0]
+Shape "trianglemesh" "point P" [ -1 0 -1  1 0 -1  1 1 -1 -1 1 -1 ]
+	"integer indices" [ 0 1 2 2 3 0]
+AttributeEnd
+
+Material "metal"  "float roughness" [.01]
+    "spectrum eta" "spds/metals/Cu_palik.eta.spd"
+    "spectrum k" "spds/metals/Cu_palik.k.spd"
+
+Include "geometry/happy.pbrt"
+
+WorldEnd

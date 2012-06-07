@@ -37,6 +37,8 @@
 #include "floatfile.h"
 struct DiffusionReflectance;
 
+
+
 // DipoleSubsurfaceIntegrator Local Declarations
 struct SubsurfaceOctreeNode {
     // SubsurfaceOctreeNode Methods
@@ -189,6 +191,9 @@ void DipoleSubsurfaceIntegrator::RequestSamples(Sampler *sampler, Sample *sample
 void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
         const Camera *camera, const Renderer *renderer) {
     if (scene->lights.size() == 0) return;
+
+
+
     vector<SurfacePoint> pts;
     // Get _SurfacePoint_s for translucent objects in scene
     if (filename != "") {
@@ -266,7 +271,7 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         const RayDifferential &ray, const Intersection &isect,
         const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.);
-    Vector wo = -ray.d;
+    Vector wo = -ray.d;	
     // Compute emitted light if ray hit an area light source
     L += isect.Le(wo);
 

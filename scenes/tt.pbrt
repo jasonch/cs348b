@@ -1,0 +1,149 @@
+Scale -1 1 1 
+
+Film "image" "integer xresolution" [1500] "integer yresolution" [833]
+#	"float cropwindow[4]" [.34 .4 .55 .6]
+"string filename" "tt.exr"
+
+# basic side view
+LookAt -2 2 2  1.8 -.15 .65   0 0 1
+
+# front
+#LookAt 2 -10 1.5   1 0 .5  0 0 1
+
+# back
+#LookAt 2 5 1.5   1 0 .5  0 0 1
+
+Camera "perspective" "float fov" [30]
+
+# top
+#LookAt 0 0 10   0 0 0  0 1  0
+#Camera "orthographic" "float screenwindow" [ -1 4 -3 2]
+
+# inside car
+#Translate -2.5 .5 -1
+#Camera "environment"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [32]
+
+WorldBegin
+
+AttributeBegin
+# sunset, no rotation is great
+#Rotate 90 0 0 1 # for day
+#Rotate 180 0 0 1 # for morn
+# pollution is pretty good
+LightSource "infinite" "string mapname" ["textures/pisa_latlong.exr"]
+	"integer nsamples" [8]
+AttributeEnd
+
+AttributeBegin
+# alternate lighting, not so interesting
+AttributeBegin
+Translate 0 0 20
+#AreaLightSource  "area" "color L" [30 30 30] "integer nsamples" [3]
+#ReverseOrientation
+#Shape "disk" "float radius" [2]
+AttributeEnd
+
+CoordSysTransform "camera"
+#LightSource "distant" "color L" [3 3 3]
+AttributeEnd
+
+# ground plane
+Material "matte" "color Kd" [.7 .7 .7]
+Shape "trianglemesh" "point P" [-100 -100 0    100 -100 0  100 100 0  -100 100 0 ]
+	"integer indices" [ 0 1 2 2 3 0 ]
+
+AttributeBegin
+Translate 2.5 -.5 .7
+LightSource "point" "color I" [.1 .1 .1]
+AttributeEnd
+
+# plastic trim
+Texture "tt-kd-1" "color" "constant" "color value" [.01 .01 .01 ]
+Texture "tt-ks-1" "color" "constant" "color value" [.1 .1 .1]
+Texture "tt-urough-1" "float" "constant" "float value" [.1]
+Texture "tt-vrough-1" "float" "constant" "float value" [.1]
+
+# main body
+Texture "tt-kd-2" "color" "constant" "color value" [.3 .3 .35]
+Texture "tt-ks-2" "color" "constant" "color value" [.5 .5 .5]
+Texture "tt-urough-2" "float" "constant" "float value" [.025]
+Texture "tt-vrough-2" "float" "constant" "float value" [.025]
+
+# darker grey trim, between body panels 
+Texture "tt-kd-3" "color" "constant" "color value" [.2 .2 .25]
+Texture "tt-ks-3" "color" "constant" "color value" [0 0 0]
+Texture "tt-urough-3" "float" "constant" "float value" [.1]
+Texture "tt-vrough-3" "float" "constant" "float value" [.1]
+
+# shiny metal parts
+Texture "tt-ks-4" "color" "constant" "color value" [1 .5 .5]
+Texture "tt-roughness-4" "float" "constant" "float value" [.01]
+
+# front headlights--should use uber with some transmittance?
+Texture "tt-kd-5" "color" "constant" "color value" [0 0 0]
+Texture "tt-ks-5" "color" "constant" "color value" [.8 .8 .8]
+Texture "tt-urough-5" "float" "constant" "float value" [.1]
+Texture "tt-vrough-5" "float" "constant" "float value" [.1]
+
+# brakes
+Texture "tt-ks-6" "color" "constant" "color value" [.2 .2 .2]
+Texture "tt-roughness-6" "float" "constant" "float value" [.1]
+
+# grill beneath front bumper
+Texture "tt-kd-11" "color" "constant" "color value" [.1 .1 .1]
+Texture "tt-ks-11" "color" "constant" "color value" [.1 .1 .1 ]
+Texture "tt-roughness-11" "float" "constant" "float value" [.1]
+
+
+# dunno.  interior stuff?  
+Texture "tt-kd-7" "color" "constant" "color value" [.3 .3 .3]
+Texture "tt-ks-7" "color" "constant" "color value" [0 0 0]
+Texture "tt-urough-7" "float" "constant" "float value" [.1]
+Texture "tt-vrough-7" "float" "constant" "float value" [.1]
+Texture "tt-kd-8" "color" "constant" "color value" [.5 .5 .5]
+Texture "tt-ks-8" "color" "constant" "color value" [0 0 0]
+Texture "tt-urough-8" "float" "constant" "float value" [.1]
+Texture "tt-vrough-8" "float" "constant" "float value" [.1]
+Texture "tt-kd-9" "color" "constant" "color value" [.4 .4 .5]
+Texture "tt-ks-9" "color" "constant" "color value" [0 0 0]
+Texture "tt-urough-9" "float" "constant" "float value" [.1]
+Texture "tt-vrough-9" "float" "constant" "float value" [.1]
+Texture "tt-kd-10" "color" "constant" "color value" [.2 .2 .2]
+Texture "tt-ks-10" "color" "constant" "color value" [0 0 0]
+Texture "tt-urough-10" "float" "constant" "float value" [.1]
+Texture "tt-vrough-10" "float" "constant" "float value" [.1]
+
+Texture "tt-kd-14" "color" "constant" "color value" [.5 .5 .5]
+Texture "tt-ks-14" "color" "constant" "color value" [0 0 0 ]
+Texture "tt-roughness-14" "float" "constant" "float value" [.1]
+
+Texture "tt-kd-15" "color" "constant" "color value" [.5 .5 .5]
+Texture "tt-ks-15" "color" "constant" "color value" [0 0 0 ]
+Texture "tt-roughness-15" "float" "constant" "float value" [.1]
+
+# tail light interiors?
+Texture "tt-kd-16" "color" "constant" "color value" [.5 .5 .5]
+Texture "tt-ks-16" "color" "constant" "color value" [0 0 0 ]
+Texture "tt-roughness-16" "float" "constant" "float value" [.1]
+
+# license plate holder
+Texture "tt-kd-13" "color" "constant" "color value" [.3 .3 .3]
+Texture "tt-ks-13" "color" "constant" "color value" [.5 .5 .5 ]
+Texture "tt-roughness-13" "float" "constant" "float value" [.1]
+
+# tire
+Texture "wheel-kd-2" "color" "constant" "color value" [.1 .1 .1]
+Texture "wheel-ks-2" "color" "constant" "color value" [.2 .2 .2]
+Texture "wheel-roughness-2" "float" "constant" "float value" [.1]
+
+# metal wheel hubcap thing
+Texture "wheel-ks-1" "color" "constant" "color value" [.3 .3 .3]
+Texture "wheel-roughness-1" "float" "constant" "float value" [.1]
+Texture "wheel-ks-3" "color" "constant" "color value" [.2 .2 .2]
+Texture "wheel-roughness-3" "float" "constant" "float value" [.1]
+
+Include "geometry/tt.pbrt"
+
+WorldEnd

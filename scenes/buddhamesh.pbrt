@@ -1,0 +1,47 @@
+# pbrt v2.0 Scene File Ver 1.00 
+# Exported by GtoolExporter 
+
+Scale -1 1 1  # account for fixed lookat bug... 
+
+# Camera Camera01
+LookAt 22.9312 -41.4083 17.5894
+		 22.59 -40.4709 17.5196
+		 -0.0238581 0.0655496 0.997564
+		 
+Camera "perspective" 
+	 "float fov" [30.2642] 
+
+Film "image" 
+	 "integer xresolution"  [750]
+	 "integer yresolution"  [1200]
+	 "string filename"  ["buddhamesh.exr"]
+# End Camera Camera01
+
+PixelFilter "mitchell" 
+	 "float xwidth" [0.5] 
+	 "float ywidth" [0.5] 
+	 "float B" [0.67] 
+	 "float C" [0.165] 
+
+Sampler "lowdiscrepancy" 
+	 "integer pixelsamples" [128] 
+
+WorldBegin
+
+
+# Enviorment 
+
+AttributeBegin 
+LightSource "infinite" 
+	"color L" [0.945098 0.984314 1.0]
+"integer nsamples" [32]
+"color scale" [1.5 1.5 1.5]
+AttributeEnd 
+
+# ***** Lights ***** 
+
+# ***** End  Lights *****
+Include "geometry/buddhamesh-mat.pbrt" 
+Include "geometry/buddhamesh-geom.pbrt" 
+
+WorldEnd

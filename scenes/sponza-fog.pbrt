@@ -1,0 +1,47 @@
+Accelerator "bvh"
+
+LookAt -7 0 .5   4 -7 6 0 0 1
+Scale -1 1 1
+
+Camera "perspective" "float fov" [70 ]
+Film "image"  "integer xresolution" [800 ] "integer yresolution" [800 ]
+    "string filename" "sponza-fog.exr"
+
+SurfaceIntegrator "directlighting"
+Sampler "lowdiscrepancy" "integer pixelsamples" [32]
+
+VolumeIntegrator "single" "float stepsize" [.15]
+
+WorldBegin
+
+
+AttributeBegin
+ConcatTransform [
+  1 0 0 0
+  0 0 1 0
+  0 1 0 0
+  0 0 0 1 ]
+Volume "exponential" "float a" [2] "float b" [.1]
+	"point p0" [-20 -1 -20] "point p1" [20 30 20] 
+	"color sigma_a" [.005 .005 .005 ]
+	"color sigma_s" [.02 .02 .02 ]
+AttributeEnd
+
+AttributeBegin
+CoordSysTransform "camera"
+#LightSource "point" "color I" [100 100 100]  "point from" [0 0  1]
+AttributeEnd
+
+#LightSource "distant" "color L" [35 32 28  ] "point from" [-5 5 30] "point to" [0 -3 0]
+LightSource "point" "color I" [23 19 16  ] "point from" [-5 5 30]
+
+AttributeBegin
+AreaLightSource "area" "color L" [12 12 14 ] "integer nsamples" [15]
+ReverseOrientation
+Material "matte" "color Kd" [0 0 0 ]
+Shape "disk" "float radius" [75] "float height" [64]
+AttributeEnd
+
+Include "geometry/sponzageom.pbrt"
+
+WorldEnd

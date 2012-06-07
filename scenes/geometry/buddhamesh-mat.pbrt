@@ -1,0 +1,18 @@
+
+### Object: Buddha_Mesh25251 ### 
+
+MakeNamedMaterial "Buda" 
+#	 "string type" ["glass"] 
+#	 "color Kr" [1.0 1.0 1.0] "color Kt" [1.0 1.0 1.0] "float index" [1.5] 
+	 "string type" ["matte"] 
+	 "color Kd" [0.811765 0.811765 0.811765]
+	 
+### End Object: Buddha_Mesh25251 ### 
+
+### Object: Plane01 ### 
+
+MakeNamedMaterial "Floor" 
+	 "string type" ["matte"] 
+	 "color Kd" [0.701961 0.686275 0.662745]
+
+### End Object: Plane01 ### 

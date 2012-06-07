@@ -1,0 +1,72 @@
+
+Film "image"
+	"integer xresolution" [1600] "integer yresolution" [800]
+    "string filename" "sphere-ewa-vs-trilerp.exr"
+#	"float cropwindow" [.2 .4 .07 .22]
+
+Sampler "stratified" "integer xsamples" [1] "integer ysamples" [1] "bool jitter" ["false"]
+
+PixelFilter "box"
+
+LookAt 0 3 8  0 .9 0   0 1 0
+Camera "perspective" "float fov" [20]
+
+SurfaceIntegrator "directlighting"
+
+WorldBegin
+
+AttributeBegin
+#  LightSource "distant" "color L" [3 3 3] "point from" [0 10 3] "point to" [0 0 0 ]
+AttributeEnd
+
+AttributeBegin
+  CoordSysTransform "camera"
+  AreaLightSource "area" "color L" [4 4 4] "integer nsamples" [128]
+  Translate 0 3 -10
+  Material "matte" "color Kd" [ 0 0 0 ]
+  Shape "disk" "float radius" [3] 
+AttributeEnd
+
+AttributeBegin
+  AreaLightSource "area" "color L" [2 2 2] "integer nsamples" [128]
+  Translate 0 15 0
+  Rotate 90 1 0 0 
+  Material "matte" "color Kd" [ 0 0 0 ]
+  Shape "disk" "float radius" [20] 
+AttributeEnd
+
+AttributeBegin
+  Material "matte" "color Kd" [.1 .1 .1]
+  Shape "trianglemesh" "integer indices" [ 0 1 2 2 0 3 ]
+    "point P" [-10 0 -10   10 0 -10   10 0 10   -10 0 10 ]
+  Shape "trianglemesh" "integer indices" [ 0 1 2 2 0 3 ]
+    "point P" [-10 0 -10   10 0 -10   10 9 -10   -10 9 -10 ]
+  Shape "trianglemesh" "integer indices" [ 0 1 2 2 0 3 ]
+    "point P" [-10 0 -10   -10 0 10   -10 9 10   -10 9 -10 ]
+AttributeEnd
+
+Texture "g-tri" "color" "imagemap" "string filename" "textures/lines.exr"
+	"bool trilinear" ["true"]
+	"float uscale" [10] "float vscale" [10]
+Texture "g-ewa" "color" "imagemap" "string filename" "textures/lines.exr"
+	"float uscale" [10] "float vscale" [10]
+
+AttributeBegin
+Material "uber" "texture Kd" "g-tri" "color Ks" [.1 .1 .1]
+Translate -1.25 1 0
+Rotate 10 0 0 1
+Rotate -35 1 0 0
+Rotate -20 1 1 1
+Shape "sphere"
+AttributeEnd
+
+AttributeBegin
+Material "uber" "texture Kd" "g-ewa" "color Ks" [.1 .1 .1]
+Translate 1.25 1.015 0
+Rotate 10 0 0 1
+Rotate -35 1 0 0
+Rotate -20 1 1 1
+Shape "sphere"
+AttributeEnd
+
+WorldEnd

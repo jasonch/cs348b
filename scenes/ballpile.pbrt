@@ -1,0 +1,98 @@
+
+# Exported from structuresynth by the pbrt exporter
+# http://pbrt.org
+
+#http://www.flickr.com/photos/subblue/3087981816/in/pool-structuresynth
+
+# set maxdepth 17
+# R1
+# 
+# rule R1 {
+# 3 * { ry 120 h 20 } endsphere
+# { s 2} sphere
+# }
+# 
+# rule endsphere {
+# { z 1 y -1 ry 30 s 0.6 } R1
+# } 
+
+
+Film "image" "integer xresolution" [600] "integer yresolution" [600]
+
+Scale -1 1 1
+Rotate -1 0 0 1
+LookAt 1.72405 1.8964 10.157
+       -2.2411 -7.25267 -26.7936
+       0 1 0
+
+Camera "perspective" "float fov" [30]
+
+Renderer "surfacepoints" "float minsampledistance" [.025] "string filename" "ballpoints.out"
+
+WorldBegin 
+
+Material "kdsubsurface" "color Kd" [ .2 .5 .7 ] "float meanfreepath" [.1]
+
+Include "geometry/ballpile.pbrt"
+
+WorldEnd
+
+# Exported from structuresynth by the pbrt exporter
+# http://pbrt.org
+
+#http://www.flickr.com/photos/subblue/3087981816/in/pool-structuresynth
+
+# set maxdepth 17
+# R1
+# 
+# rule R1 {
+# 3 * { ry 120 h 20 } endsphere
+# { s 2} sphere
+# }
+# 
+# rule endsphere {
+# { z 1 y -1 ry 30 s 0.6 } R1
+# } 
+
+
+Film "image" "integer xresolution" [600] "integer yresolution" [600]
+    "string filename" "ballpile.exr"
+
+Scale -1 1 1
+Rotate -1 0 0 1
+LookAt 1.72405 1.8964 10.157
+       -2.2411 -7.25267 -26.7936
+       0 1 0
+
+Camera "perspective" "float fov" [30]
+Sampler "lowdiscrepancy" "integer pixelsamples" [16]
+
+SurfaceIntegrator "dipolesubsurface" "string pointsfile" "ballpoints.out"
+    "float maxerror" [.15]
+Renderer "sampler"
+
+WorldBegin 
+
+AttributeBegin
+Rotate 90 1 0 0
+LightSource "infinite" "string mapname" ["textures/glacier_latlong.exr"]
+	"integer nsamples" [32]
+AttributeEnd
+
+#Material "plastic" "rgb Kd" [.1 .1 .1]
+Material "mirror"
+
+TransformBegin 
+    Transform [ 20 0 0 0 0 .01 0 0 0 0 20 0 0 -1.94 0 1 ]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 0.5 0.5 0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5 -0.5]
+TransformEnd
+
+Material "kdsubsurface" "color Kd" [ .2 .5 .7 ] "float meanfreepath" [.1]
+Include "geometry/ballpile.pbrt"
+
+WorldEnd

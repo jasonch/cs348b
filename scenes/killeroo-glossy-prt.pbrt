@@ -1,0 +1,40 @@
+
+LookAt 400 20 30   0 63 -110   0 0 1
+Rotate -5 0 0 1
+Camera "perspective" "float fov" [39]
+Film "image"  "integer xresolution" [300] "integer yresolution" [300]
+    "string filename" "killeroo-glossy-prt.exr"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [2] 
+
+SurfaceIntegrator "glossyprt" "integer lmax" [5] "integer nsamples" [128]
+    "color Kd" [ .05 .05 .05 ] "color Ks" [ .9 .9 .9 ] "float roughness" [.05]
+
+WorldBegin
+
+AttributeBegin
+Rotate -90 1 0 0 
+LightSource "infinite" 	"integer nsamples" [64]
+    "string mapname" ["textures/grace_latlong.exr"] "color L" [10 10 10]
+AttributeEnd
+
+Material "plastic" "color Kd" [.05 .05 .05] "color Ks" [.9 .9 .9]
+       "float roughness" [.05]
+
+AttributeBegin
+  Translate 0 0 -140
+Shape "trianglemesh" "point P" [ -1000 -1000 0 1000 -1000 0 1000 1000 0 -1000 1000 0 ]
+      "float uv" [ 0 0 5 0 5 5 0 5 ]
+	"integer indices" [ 0 1 2 2 3 0]
+AttributeEnd
+
+AttributeBegin
+Scale .5 .5 .5
+Rotate -60 0 0 1
+Translate 100 200 -140
+    Include "geometry/killeroo.pbrt"
+Translate -200 0 0
+    Include "geometry/killeroo.pbrt"
+
+AttributeEnd
+WorldEnd

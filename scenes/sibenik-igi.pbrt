@@ -1,0 +1,46 @@
+Scale -1 1 1
+Accelerator "bvh"
+
+Film "image"
+# for orthographic vs perspective comparisons:
+	"integer xresolution" [300] "integer yresolution" [600]
+# for latitude-longitude map
+	"integer xresolution" [800] "integer yresolution" [400]
+    "string filename" "sibenik-igi.exr"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [32] 
+PixelFilter "box"
+
+# persp & ortho
+#LookAt 20 0 10    0 0 4  0 0 1 
+
+# env
+LookAt 10 0 7 0 0 4 0 0 1
+
+#Camera "perspective" "float fov" [21]
+#Camera "orthographic" "float screenwindow" [ -3.6 3.6 -7.2 7.2 ]
+Camera "environment"
+
+SurfaceIntegrator "igi" "integer nlights" [16] 
+    "integer nsets" [32] "float glimit" [.25]
+
+WorldBegin
+AttributeBegin
+AreaLightSource "area" "color L" [15 15 15 ] "integer nsamples" [4]
+Translate 0 0 25
+Shape "sphere" "float radius" [4]
+AttributeEnd
+
+# positive +x is toward the back of church
+# +z is up
+AttributeBegin
+AreaLightSource "area" "color L" [10 10 10 ] "integer nsamples" [1]
+Translate 20 0 17
+Rotate 90 0 1 0
+Shape "cylinder" "float radius" [.2] "float zmin" [-5] "float zmax" [5]
+#Shape "sphere" "float radius" [.5]
+AttributeEnd
+
+Include "geometry/sibenik.pbrt"
+
+WorldEnd

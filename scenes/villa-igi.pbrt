@@ -1,0 +1,77 @@
+# pbrt v2.0 Scene File
+# Exported by pbrtBlend Blender Exporter
+
+Scale -1 1 1  # account for fixed lookat bug...
+
+
+# in corner, looking across dining room table
+#LookAt 24.064064 1.208986 3.816026 
+#       23.369665 1.925634 3.751019 
+#       -0.045243 0.046679 0.997885
+
+#  between dining room table and kitchen area, looking at living room area
+#LookAt 24.743057 3.784065 3.648668 
+#       23.931385 4.364570 3.583843 
+#       -0.052733 0.037702 0.997897
+
+# higher up, over by counter looking at living room area
+#LookAt 22.694149 3.264620 4.273204 
+#       21.974380 3.941408 4.118640 
+#       -0.112611 0.105872 0.987983
+
+LookAt 24.913168 4.199413 4.306132 
+       24.118280 4.773721 4.110367 
+       -0.158681 0.114649 0.980651
+
+Camera "perspective" "float fov" [35]
+#    "float focaldistance" [2] "float lensradius" [.3]
+
+Film "image"
+   "integer xresolution" [720] "integer yresolution" [600]
+"string filename" "villa-igi.exr"
+
+PixelFilter "mitchell"
+Sampler "lowdiscrepancy" "integer pixelsamples" [512]
+Renderer "sampler"
+SurfaceIntegrator "igi" "integer nsets" [512] "integer nlights" [4]
+    "float glimit" [2]
+ 
+WorldBegin
+
+AttributeBegin
+Rotate 90 0 0 1
+Rotate 90 1 0 0
+#LightSource "infinite"
+#    "string mapname" "textures/skylight-dusk.exr"
+#    "integer nsamples" [32]
+#    "color scale" [.05 .05 .05 ]
+AttributeEnd
+
+# metal lamp
+LightSource "spot" "point from" [ 16.801588 8.158092 4.187272  ]
+     "point to" [ 16.786858 8.159492 3.1 ]  "float coneangle" [45]
+"float conedeltaangle" [20]
+     "spectrum I" "spds/lights/SHPS.spd"
+     "rgb scale" [210 210 210] ## [70 70 70 ]
+ 
+# kitchen counter
+#LightSource "point" "point from" [ 21.276855 7.200419 3.96 ]
+#     "color I" [5 5 5]
+LightSource "spot" "point from" [  22.116617 7.185427 3.96 ]
+     "point to" [  22.116617 7.185427 2.96 ]
+     "color I" [7 7 7] "float coneangle" [60]
+#LightSource "point" "point from" [  23.058599 7.186698 3.96 ]
+#     "color I" [5 5 5]
+
+# table
+#LightSource "point" "point from" [ 23.565807 2.462955 4.35  ]
+#    "spectrum I" "spds/lights/SHPS.spd"
+#    "rgb scale" [40 40 40] #     "color I" [50 50 50]
+#LightSource "point" "point from" [ 21.317902 2.461441 4.35]
+#    "spectrum I" "spds/lights/SHPS.spd"
+#     "rgb scale" [40 40 40] #     "color I" [50 50 50]
+ 
+Include "geometry/villa-mat.pbrt"
+Include "geometry/villa-geom.pbrt"
+
+WorldEnd

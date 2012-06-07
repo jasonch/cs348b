@@ -1,0 +1,40 @@
+
+# good downstairs view fov=66 ish
+#LookAt 16 -1 2  -4 .2 1.5 0 0 1
+
+# good upstairs looking over edge view do fov=70
+LookAt 12 -1 7   -4 .2 1.5 0 0 1
+
+# back a bit from edge, get some indir
+#LookAt 15 -1 7    -4 .2 3.5 0 0 1
+
+#LookAt 15 -.25 7   11 -3 6.5  0 0 1
+
+Scale -1 1 1
+Camera "perspective" "float fov" [70 ] "float focaldistance" [25] 
+#	"float lensradius" [ .05]
+Film "image"  "integer xresolution" [900 ] "integer yresolution" [900 ] 
+    "string filename" "sponza-phomap.exr"
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [16]
+PixelFilter "box" 
+
+SurfaceIntegrator "photonmap" "integer causticphotons" [0]
+	"integer indirectphotons" [400000]
+	"integer finalgathersamples" [32]
+	    "bool finalgather" ["true"] "integer nused" [30]
+    "float maxdist" [1.5]
+
+
+WorldBegin
+
+AttributeBegin
+AreaLightSource "area" "color L" [10 9.5 9] "integer nsamples" [8]
+ReverseOrientation
+Material "matte" "color Kd" [0 0 0 ]
+Shape "disk" "float radius" [160] "float height" [100]
+AttributeEnd
+
+Include "geometry/sponzageom.pbrt"
+
+WorldEnd

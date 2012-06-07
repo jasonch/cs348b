@@ -45,8 +45,13 @@ Material "kdsubsurface" "color Kd" [.9 .9 .0] "float meanfreepath" [.7] "color K
 #Scale 1.25 1.25 1.25
 #Include "geometry/room-teapot.pbrt"
 Scale 20 20 20
-Rotate 180 0 1 0
-Include "geometry/bunny.pbrt"
+#Rotate 180 0 1 0
+
+Rotate 90 0 1 0
+#Rotate 270 0 0 1
+Rotate 270 1 0 0
+Scale 0.2 0.2 0.2
+Include "logpile_rotated.pbrt"
 AttributeEnd
 
 WorldEnd

@@ -1,0 +1,57 @@
+# pbrt v2.0 Scene File
+# Exported by pbrtBlend Blender Exporter
+
+Scale -1 1 1  # account for fixed lookat bug...
+
+LookAt 12.950244 7.380909 3.851503 
+       13.920773 7.146704 3.794730 
+       0.055187 -0.013328 0.998387
+
+Camera "perspective" "float fov" [47]
+Film "image"
+   "integer xresolution" [1000] "integer yresolution" [444]
+"string filename" "villa-lights-on.exr"
+
+PixelFilter "mitchell"  "float B" [0.750000]  "float C" [0.125000]
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [512]
+
+SurfaceIntegrator "igi" "integer nsets" [128] "integer nlights" [4]
+ 
+WorldBegin
+
+AttributeBegin
+Rotate 90 0 0 1
+Rotate 90 1 0 0
+#LightSource "infinite"
+#    "string mapname" "textures/skylight-sunset.exr"
+#    "color scale" [.25 .25 .25] "integer nsamples" [16]
+AttributeEnd
+
+# metal lamp
+LightSource "spot" "point from" [ 16.801588 8.158092 4.187272  ]
+     "point to" [ 16.786858 8.159492 3.1 ]  "float coneangle" [50]
+"float conedeltaangle" [20]
+     "spectrum I" "spds/lights/SHPS.spd"
+     "rgb scale" [70 70 70 ]
+ 
+# kitchen counter
+LightSource "point" "point from" [ 21.276855 7.200419 3.96 ]
+     "color I" [5 5 5]
+LightSource "point" "point from" [  22.116617 7.185427 3.96 ]
+     "color I" [5 5 5]
+LightSource "point" "point from" [  23.058599 7.186698 3.96 ]
+     "color I" [5 5 5]
+
+# table
+LightSource "point" "point from" [ 23.565807 2.462955 4.35  ]
+    "spectrum I" "spds/lights/SHPS.spd"
+    "rgb scale" [10 10 10]
+LightSource "point" "point from" [ 21.317902 2.461441 4.35]
+    "spectrum I" "spds/lights/SHPS.spd"
+     "rgb scale" [10 10 10]
+ 
+Include "geometry/villa-mat.pbrt"
+Include "geometry/villa-geom.pbrt"
+
+WorldEnd

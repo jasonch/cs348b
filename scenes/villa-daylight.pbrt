@@ -1,0 +1,45 @@
+# pbrt v2.0 Scene File
+# Exported by pbrtBlend Blender Exporter
+
+Scale -1 1 1  # account for fixed lookat bug...
+
+# std view
+
+LookAt 10.239117 5.013952 3.762092 
+       11.232647 5.118843 3.718545 
+        0.0433 0.00458 .999
+Camera "perspective" "float fov" [54]
+#    "float focaldistance" [10] "float lensradius" [.025]
+
+Film "image"
+   "integer xresolution" [600] "integer yresolution" [380]
+"string filename" "villa-daylight.exr"
+
+Renderer "metropolis" "integer samplesperpixel" [16384] 
+    "bool dodirectseparately" ["false"] 
+ 
+WorldBegin
+
+AttributeBegin
+Rotate 15 1 0 0
+Rotate 20 0 1 0
+Rotate 290 0 0 1
+LightSource "infinite"
+    "string mapname" "textures/skylight-day.exr"
+    "color scale" [6 6 6 ]
+AttributeEnd
+
+AttributeBegin
+LookAt 10 -50 15 # 10 -50 40
+    10.239117 5.013952 3.762092 
+    1 0 0
+AreaLightSource "diffuse" 
+     "spectrum L" "spds/lights/Daylight.spd"
+        "color scale" [6000 6000 6000 ]
+Shape "disk" "float radius" [15]
+AttributeEnd
+
+Include "geometry/villa-mat.pbrt"
+Include "geometry/villa-geom.pbrt"
+
+WorldEnd

@@ -1,0 +1,36 @@
+
+Film "image" 
+	"integer xresolution" [800] "integer yresolution" [800]
+        "string filename" "yeahright.exr"
+        
+LookAt -30 30 10   -2 0 -3   0 0 1
+
+Camera "perspective" "float fov" [35] "float lensradius" [.5] "float focaldistance" [50]
+
+Renderer "metropolis" "integer samplesperpixel" [256] 
+    "bool dodirectseparately" ["true"] "integer directsamples" [32]
+
+WorldBegin
+
+LightSource "infinite" "string mapname" ["textures/glacier_latlong.exr"]
+	"integer nsamples" [8]
+
+Material "metal"  "float roughness" [.001]
+    "spectrum eta" "spds/metals/Al.eta.spd"
+    "spectrum k" "spds/metals/Al.k.spd"
+
+Shape "trianglemesh" "point P" [ -40 -40 -9   40 -40 -9   40 40 -9   -40 40 -9]
+   "integer indices" [0 1 2 2 3 0]
+
+Material "metal"  "float roughness" [.001]
+    "spectrum eta" "spds/metals/Ag.eta.spd"
+    "spectrum k" "spds/metals/Ag.k.spd"
+
+Rotate 40 1 -.2 0
+
+Rotate 40 0 0 1
+Rotate 180 1 0 0
+Rotate 90 0 1 0
+Include "geometry/yeahright.pbrt"
+
+WorldEnd

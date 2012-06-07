@@ -1,0 +1,22 @@
+
+# Exported from structuresynth by the pbrt exporter
+# http://pbrt.org
+
+Film "image" "integer xresolution" [3000] "integer yresolution" [1500]
+    "string filename" "city-ao.exr"
+
+Scale -1 1 1
+LookAt 4.6332 9.217 4.20972
+       -0.277509 -23.411 -16.0446
+       -0.00397098 -0.526971 0.849874
+
+Camera "perspective" "float fov" [27]
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [32]
+SurfaceIntegrator "ambientocclusion" "integer nsamples" [64] "float maxdist" [1]
+
+WorldBegin 
+
+Include "geometry/citygeom.pbrt"
+
+WorldEnd
