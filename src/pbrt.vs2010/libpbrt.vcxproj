@@ -170,6 +170,7 @@
     <ClInclude Include="..\core\api.h" />
     <ClInclude Include="..\core\camera.h" />
     <ClInclude Include="..\core\diffgeom.h" />
+    <ClInclude Include="..\core\dynload.h" />
     <ClInclude Include="..\core\error.h" />
     <ClInclude Include="..\core\fileutil.h" />
     <ClInclude Include="..\core\film.h" />
