@@ -21,3 +21,29 @@
 # Ignore user saved image files
 /public/images/*.png
 
+# Ignore visual studio files
+src/pbrt.vs2010/ipch/
+src/lib/*
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+*.opensdf
+*.unsuccessfulbuild
+bin/*
+
+
