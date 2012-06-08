@@ -167,8 +167,6 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
     SubsurfaceFromDiffuse(kd, mfp, e, &sigma_a, &sigma_prime_s);	
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
-
-
 	
 	if(!runonce){
 		openTempDist("tempdist_formatted");
@@ -188,7 +186,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	float vals[3] = {0.0f, 0.0f, 0.0f};
 	if(temp > 100.0f){
 		float rgb[3] = {700, 530, 470};
-		Blackbody(rgb, 3, 30.0f*k, vals);
+		Blackbody(rgb, 3, 30.0f*temp, vals);
 		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
 	}
 
