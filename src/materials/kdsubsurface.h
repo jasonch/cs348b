@@ -1,4 +1,3 @@
-
 /*
     pbrt source code Copyright(c) 1998-2010 Matt Pharr and Greg Humphreys.
 
@@ -32,7 +31,9 @@
 #include "pbrt.h"
 #include "material.h"
 
-#define NUMVOXELS 100
+#define VOXELX 30
+#define VOXELY 64
+#define VOXELZ 30
 
 // KdSubsurfaceMaterial Declarations
 class KdSubsurfaceMaterial : public Material {
@@ -51,17 +52,20 @@ public:
                   MemoryArena &arena) const;
 private: 
 	unsigned int saveToArray(const std::string &txt, char ch);
-	void openGrid(const char* file, float* grid);
+	void openGrid(const char* file, double* grid);
 	int openTempDist(const char* file);
+	void getMinMaxTemperatures();
+
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
     Reference<Texture<float> > meanfreepath, eta, bumpMap;
-	float tempdist[NUMVOXELS][NUMVOXELS][NUMVOXELS];
-	float gridX[NUMVOXELS];
-	float gridY[NUMVOXELS];
-	float gridZ[NUMVOXELS];
-	float maxTemp, minTemp;
+	double tempdist[VOXELX][VOXELY][VOXELZ];
+	double gridX[VOXELX];
+	double gridY[VOXELY];
+	double gridZ[VOXELZ];
+	double maxTemp, minTemp;
+	int nx, ny, nz;
 };
 
 
