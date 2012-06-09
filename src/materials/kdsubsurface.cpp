@@ -208,22 +208,13 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	}
 	if( k >= nz ){
 		k = nz-1;
-=======
-	//std::cout << p_obj.x << " " << p_obj.y << " " << p_obj.z << std::endl;
-	//std::cout << i << " " << j << " " << k << std::endl;
-	double temp = tempdist[i][j][k] * 1000.0f;
-	float vals[3] = {0.0f, 0.0f, 0.0f};
-	if(temp > 100.0f){
-		float rgb[3] = {700, 530, 470};
-		Blackbody(rgb, 3, 30.0f*temp, vals);
-		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
->>>>>>> b5647f4556b36795f53d84c460f55dd3f1e1a730
+
 	}
 
 	double temp = tempdist[i][j][k];
 
 
-	float vals[3] = {1.0f, 1.0f, 1.0f};
+	float vals[3] = {0.1f, 0.1f, 0.1f};
 	
 	
 	if(temp > 500.0f){
@@ -233,9 +224,6 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	
 	}
 
-	vals[0] = temp * 0.5f;
-	vals[1] = 1.0f - temp*0.5f;
-	vals[2] = 0.0f;
 	
 
 	vdb_color(vals[0], vals[1], vals[2]);
