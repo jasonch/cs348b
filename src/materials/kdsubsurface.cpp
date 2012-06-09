@@ -21,6 +21,11 @@
 
  */
 
+#if 1
+#define VDB
+#include "vdb-win/vdb.h"
+#endif
+
 
 // materials/kdsubsurface.cpp*
 #include "stdafx.h"
@@ -31,19 +36,19 @@
 #include "reflection.h"
 #include "texture.h"
 #include "paramset.h"
-
-
 //for temperature distribution
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
 #include <stdlib.h>
-#define NUMVOXELS 100
-double tempdist[NUMVOXELS][NUMVOXELS][NUMVOXELS];
-double gridX[NUMVOXELS];
-double gridY[NUMVOXELS];
-double gridZ[NUMVOXELS];
+
+
+double tempdist[30][64][30];
+double gridX[30];
+double gridY[64];
+double gridZ[30];
+int nx,ny,nz;
 
 
 unsigned int saveToArray(const std::string &txt, char ch)
@@ -67,15 +72,16 @@ unsigned int saveToArray(const std::string &txt, char ch)
 	int arrayIndex = 0;
     // Decompose statement
     while( pos != std::string::npos ) {
-        tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+		tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
 		arrayIndex++;
         initialPos = pos + 1;
+		
 
         pos = txt.find( ch, initialPos );
     }
 
     // Add the last one
-    tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+  tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
 
     return arrayIndex;
 }
@@ -86,11 +92,13 @@ void openGrid(const char* file, double* grid){
 	int linenumber = 0;
 	if (myfile.is_open())
 	{
+		
+
 		while ( myfile.good() )
 		{
 			getline (myfile,line);
+			if(line.length() < 3) break; //the last line of file was an empty line. If that's the case, finish reading
 			grid[linenumber] = strtod(line.c_str(), NULL);
-			//std::cout << grid[linenumber] << std::endl;
 			linenumber++;
 		}
 		myfile.close();
@@ -104,14 +112,24 @@ int openTempDist(const char* file){
 	std::ifstream myfile (file);
 	int linenumber = 0;
 	if (myfile.is_open())
-	{
+	{		
+		getline(myfile, line);
+		nx = atoi(line.c_str());
+		
+		getline(myfile, line);
+		ny = atoi(line.c_str());
+		
+		getline(myfile, line);
+		nz = atoi(line.c_str());
+		
+		
 		while ( myfile.good() )
 		{
 			getline (myfile,line);
+			if(line.length() < 3) break; //the last line of file was an empty line. If that's the case, finish reading
 			linenumber++;
 			saveToArray(line, '\t');
 
-			//std::cout << line << std::endl;
 		}
 		myfile.close();
 	}
@@ -168,46 +186,52 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
 
-
-	
 	if(!runonce){
-		openTempDist("tempdist_formatted");
-		openGrid("gridX", gridX);
-		openGrid("gridY", gridY);
-		openGrid("gridZ", gridZ);
+		openTempDist("tempdist2");
+		openGrid("gridX2", gridX);
+		openGrid("gridY2", gridY);
+		openGrid("gridZ2", gridZ);
 		runonce  = true;
+		
 	}
-
+	
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
 	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
 	int j = (int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1;
 	int k = (int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1;
-	//std::cout << p_obj.x << " " << p_obj.y << " " << p_obj.z << std::endl;
-	//std::cout << i << " " << j << " " << k << std::endl;
-	double temp = tempdist[i][j][k] * 1000.0f;
-	float vals[3] = {0.0f, 0.0f, 0.0f};
-	if(temp > 100.0f){
-		float rgb[3] = {700, 530, 470};
-		Blackbody(rgb, 3, 30.0f*k, vals);
-		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
+	
+	if( i >= nx ){
+		i = nx-1;
+	}
+	if( j >= ny ){
+		j = ny-1;
+	}
+	if( k >= nz ){
+		k = nz-1;
 	}
 
+	double temp = tempdist[i][j][k];
+
+
+	float vals[3] = {1.0f, 1.0f, 1.0f};
+	
+	
+	if(temp > 500.0f){
+		
+		float rgb[3] = {700, 530, 470};
+		Blackbody(rgb, 3, temp, vals);
+	
+	}
+
+	vals[0] = temp * 0.5f;
+	vals[1] = 1.0f - temp*0.5f;
+	vals[2] = 0.0f;
+	
+
+	vdb_color(vals[0], vals[1], vals[2]);
+	vdb_point(p_obj.x, p_obj.y, p_obj.z);
 	bssrdf->mult = RGBSpectrum::FromRGB(vals);
 
-	/*
-	// for now...
-	if (dgGeom.p.x > 16) {
-		float color[3] = {10.f, 0.f, 0.f};
-		bssrdf->mult = RGBSpectrum::FromRGB(color);
-	} else if (dgGeom.p.x > 15) {
-		float color[3] = {40.f, 40.f, 0.f};
-		bssrdf->mult = RGBSpectrum::FromRGB(color);
-	} else {
-		float color[3] = {10.f, 0.f, 0.f};
-		bssrdf->mult = RGBSpectrum::FromRGB(color);
-
-	}
-	*/
 	return bssrdf;
 
 

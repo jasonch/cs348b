@@ -1,6 +1,6 @@
 // cameras/realistic.cpp*
 #define LENS_FLARE_SAMPLES 5000000
-#define use_vdb 1
+#define use_vdb 0
 #if use_vdb
 #include "vdb-win/vdb.h"
 #endif

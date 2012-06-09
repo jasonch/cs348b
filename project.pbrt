@@ -39,14 +39,24 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
 AttributeBegin
 #Material "subsurface" "color sigma_a" [ .0001 .01 .01]
 #    "color sigma_prime_s" [3 3 3]
-Material "kdsubsurface" "color Kd" [.1 .1 .1] "float meanfreepath" [.7] "color Kr" [.9 .9 .9]
+Material "kdsubsurface" "color Kd" [10.0 10.0 10.0] "float meanfreepath" [.7] "color Kr" [.9 .9 .9]
 #Material "matte" "color Kd" [.8 .1 .1]
 #Translate 15 0 10
 #Scale 1.25 1.25 1.25
 #Include "geometry/room-teapot.pbrt"
 Scale 20 20 20
-Rotate 180 0 1 0
-Include "geometry/bunny.pbrt"
+#Rotate 180 0 1 0
+
+Rotate 90 0 1 0
+#Rotate 270 0 0 1
+Rotate 270 1 0 0
+Scale 0.3 0.3 0.3
+Include "logpile_rotated.pbrt"
+
+#Translate 0 0 10
+#Rotate 180 0 1 0
+#Rotate 90 0 0 1
+#Include "taesung.pbrt"
 AttributeEnd
 
 WorldEnd
