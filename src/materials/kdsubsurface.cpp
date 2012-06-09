@@ -199,6 +199,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
     SubsurfaceFromDiffuse(kd, mfp, e, &sigma_a, &sigma_prime_s);	
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
+	bssrdf->mult = CoefficientSpectrum<3>(1.f);
 
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
 	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
@@ -217,25 +218,29 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 	double temp = getTempdist(i,j,k);
 	// scale temp to normal charcoal burning temperatures
-	//assert(maxTemp > 0.f || minTemp > 0.f);
-	//temp = (temp-minTemp)*2700.f/(maxTemp-minTemp);
+	//assert(maxTemp > 0.f || minTemp > 0g.f);
+	temp = (temp-minTemp)*3000.f/(maxTemp-minTemp);
+	//printf("temp(%d, %d, %d) = %.3f\n", i, j, k, temp);
 
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	if(temp > 500.0f){	
+	if(temp > 400.0f){	
 		float rgb[3] = {700, 530, 470};
 		Blackbody(rgb, 3, temp, vals);
+		/*
+		vals[0] = temp * 0.5f;
+		vals[1] = 1.0f - temp*0.5f;
+		vals[2] = 0.0f;
+		*/
+		bssrdf->mult = 20*RGBSpectrum::FromRGB(vals);
 	}
+	//bssrdf->mult.Print(stdout); printf("\n");
 
-	vals[0] = temp * 0.5f;
-	vals[1] = 1.0f - temp*0.5f;
-	vals[2] = 0.0f;
-	
 #if VDB
 	vdb_color(vals[0], vals[1], vals[2]);
 	vdb_point(p_obj.x, p_obj.y, p_obj.z);
 #endif
-	bssrdf->mult = RGBSpectrum::FromRGB(vals);
+	
 
 	return bssrdf;
 }
