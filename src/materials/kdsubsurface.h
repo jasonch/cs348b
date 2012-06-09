@@ -31,10 +31,6 @@
 #include "pbrt.h"
 #include "material.h"
 
-#define VOXELX 30
-#define VOXELY 64
-#define VOXELZ 30
-
 // KdSubsurfaceMaterial Declarations
 class KdSubsurfaceMaterial : public Material {
 public:
@@ -51,19 +47,27 @@ public:
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
 private: 
+	void initializeArrays(int nx, int ny, int nz);
 	unsigned int saveToArray(const std::string &txt, char ch);
 	void openGrid(const char* file, double* grid);
 	int openTempDist(const char* file);
 	void getMinMaxTemperatures();
 
+	double getTempdist(int x, int y, int z) const {
+		return tempdist[ x* ny* nz + y * nz + z ];
+	}
+	void setTempdist(int x, int y, int z, double val) {
+		tempdist[ x* ny* nz + y * nz + z ] = val;
+	}
+
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
     Reference<Texture<float> > meanfreepath, eta, bumpMap;
-	double tempdist[VOXELX][VOXELY][VOXELZ];
-	double gridX[VOXELX];
-	double gridY[VOXELY];
-	double gridZ[VOXELZ];
+	double* tempdist;
+	double* gridX;
+	double* gridY;
+	double* gridZ;
 	double maxTemp, minTemp;
 	int nx, ny, nz;
 };
