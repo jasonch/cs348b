@@ -46,4 +46,4 @@ src/lib/*
 *.unsuccessfulbuild
 bin/*
 
-
+*.exr

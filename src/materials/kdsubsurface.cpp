@@ -199,7 +199,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
 	int j = (int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1;
 	int k = (int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1;
-	
+
 	if( i >= nx ){
 		i = nx-1;
 	}
@@ -208,6 +208,16 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	}
 	if( k >= nz ){
 		k = nz-1;
+=======
+	//std::cout << p_obj.x << " " << p_obj.y << " " << p_obj.z << std::endl;
+	//std::cout << i << " " << j << " " << k << std::endl;
+	double temp = tempdist[i][j][k] * 1000.0f;
+	float vals[3] = {0.0f, 0.0f, 0.0f};
+	if(temp > 100.0f){
+		float rgb[3] = {700, 530, 470};
+		Blackbody(rgb, 3, 30.0f*temp, vals);
+		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
+>>>>>>> b5647f4556b36795f53d84c460f55dd3f1e1a730
 	}
 
 	double temp = tempdist[i][j][k];
