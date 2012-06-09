@@ -21,11 +21,11 @@
 
  */
 
-#if 1
-#define VDB
+#define VDB 0
+
+#if VDB
 #include "vdb-win/vdb.h"
 #endif
-
 
 // materials/kdsubsurface.cpp*
 #include "stdafx.h"
@@ -44,14 +44,44 @@
 #include <stdlib.h>
 
 
-double tempdist[30][64][30];
-double gridX[30];
-double gridY[64];
-double gridZ[30];
-int nx,ny,nz;
+KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
+            Reference<Texture<Spectrum> > kr,
+            Reference<Texture<float> > mfp,
+            Reference<Texture<float> > e,
+            Reference<Texture<float> > bump) {
+
+		Kd = kd;
+        Kr = kr;
+        meanfreepath = mfp;
+        eta = e;
+        bumpMap = bump;
+		tempdist = gridX = gridY = gridZ = NULL;
+
+		openTempDist("tempdist2");
+		openGrid("gridX2", gridX);
+		openGrid("gridY2", gridY);
+		openGrid("gridZ2", gridZ);
+
+		getMinMaxTemperatures();
+		printf("Constructor - Max Temp: %.3f, Min Temp: %.3f\n", maxTemp, minTemp);
+}
 
 
-unsigned int saveToArray(const std::string &txt, char ch)
+void KdSubsurfaceMaterial::getMinMaxTemperatures() {
+
+	maxTemp = 0.f; 
+	minTemp = DBL_MAX;
+	for (int i = 0; i < nx; i++) {
+	for (int j = 0; j < ny; j++) {
+	for (int k = 0; k < nz; k++) {
+		double temp = getTempdist(i,j,k);
+		if (maxTemp < temp) maxTemp = temp;
+		if (minTemp > temp)	minTemp = temp;
+		//printf("temp: %.3f, Max Temp: %.3f, Min Temp: %.3f\n", temp, maxTemp, minTemp);
+	}}}
+}
+
+unsigned int KdSubsurfaceMaterial::saveToArray(const std::string &txt, char ch)
 {
     unsigned int pos = txt.find( ch );
 	if(string::npos == pos) return 0;
@@ -63,8 +93,6 @@ unsigned int saveToArray(const std::string &txt, char ch)
 	initialPos = pos + 1;
     pos = txt.find( ch, initialPos );
 	
-	
-
 	int j = atoi(txt.substr( initialPos, pos - initialPos + 1 ).c_str()) - 1;
 	initialPos = pos + 1;
     pos = txt.find( ch, initialPos );
@@ -72,28 +100,25 @@ unsigned int saveToArray(const std::string &txt, char ch)
 	int arrayIndex = 0;
     // Decompose statement
     while( pos != std::string::npos ) {
-		tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+		setTempdist(i,j,arrayIndex, strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL));
 		arrayIndex++;
         initialPos = pos + 1;
 		
-
         pos = txt.find( ch, initialPos );
     }
 
     // Add the last one
-  tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+    setTempdist(i,j,arrayIndex, strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL));
 
     return arrayIndex;
 }
 
-void openGrid(const char* file, double* grid){
+void KdSubsurfaceMaterial::openGrid(const char* file, double* grid){
 	string line;
 	std::ifstream myfile (file);
 	int linenumber = 0;
 	if (myfile.is_open())
 	{
-		
-
 		while ( myfile.good() )
 		{
 			getline (myfile,line);
@@ -107,8 +132,16 @@ void openGrid(const char* file, double* grid){
 
 }
 
-int openTempDist(const char* file){
-	  string line;
+void KdSubsurfaceMaterial::initializeArrays(int nx, int ny, int nz) {
+	gridX = new double[nx];
+	gridY = new double[ny];
+	gridZ = new double[nz];
+
+	tempdist = new double[nx*ny*nz];
+}
+
+int KdSubsurfaceMaterial::openTempDist(const char* file){
+    string line;
 	std::ifstream myfile (file);
 	int linenumber = 0;
 	if (myfile.is_open())
@@ -122,6 +155,7 @@ int openTempDist(const char* file){
 		getline(myfile, line);
 		nz = atoi(line.c_str());
 		
+		initializeArrays(nx, ny, nz);
 		
 		while ( myfile.good() )
 		{
@@ -132,15 +166,10 @@ int openTempDist(const char* file){
 
 		}
 		myfile.close();
-	}
-
-	else std::cout << "Unable to open file"; 
+	}	else std::cout << "Unable to open file"; 
 
 	return 0;
 }
-
-
-bool runonce = false;
 
 
 // KdSubsurfaceMaterial Method Definitions
@@ -154,21 +183,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     else
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
-/*
-    Spectrum R = Kr->Evaluate(dgs).Clamp();
-    float e = eta->Evaluate(dgs);
-    if (!R.IsBlack())
-        bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(R,
-            BSDF_ALLOC(arena, FresnelDielectric)(1., e)));
-    return bsdf;
 
-	Spectrum r = Kd->Evaluate(dgs).Clamp();
-    //float sig = Clamp(sigma->Evaluate(dgs), 0.f, 90.f);
-    //if (sig == 0.)
-        bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
-    //else
-    //    bsdf->Add(BSDF_ALLOC(arena, OrenNayar)(r, sig));
-*/
 	return bsdf;
 }
 
@@ -176,7 +191,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
-    assert(dgGeom.p.x == dgShading.p.x && dgGeom.p.y == dgShading.p.y);
+	assert(tempdist != NULL && gridX != NULL && gridY != NULL && gridZ != NULL);
 	//printf("dgGeom (%.3f, %.3f, %.3f)\n", dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
     float e = eta->Evaluate(dgShading);
     float mfp = meanfreepath->Evaluate(dgShading);
@@ -186,15 +201,6 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
 
-	if(!runonce){
-		openTempDist("tempdist2");
-		openGrid("gridX2", gridX);
-		openGrid("gridY2", gridY);
-		openGrid("gridZ2", gridZ);
-		runonce  = true;
-		
-	}
-	
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
 	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
 	int j = (int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1;
@@ -208,31 +214,31 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	}
 	if( k >= nz ){
 		k = nz-1;
-
 	}
 
-	double temp = tempdist[i][j][k];
+	double temp = getTempdist(i,j,k);
+	// scale temp to normal charcoal burning temperatures
+	//assert(maxTemp > 0.f || minTemp > 0.f);
+	//temp = (temp-minTemp)*2700.f/(maxTemp-minTemp);
 
-
-	float vals[3] = {0.1f, 0.1f, 0.1f};
+	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	
-	if(temp > 500.0f){
-		
+	if(temp > 500.0f){	
 		float rgb[3] = {700, 530, 470};
 		Blackbody(rgb, 3, temp, vals);
-	
 	}
 
+	vals[0] = temp * 0.5f;
+	vals[1] = 1.0f - temp*0.5f;
+	vals[2] = 0.0f;
 	
-
+#if VDB
 	vdb_color(vals[0], vals[1], vals[2]);
 	vdb_point(p_obj.x, p_obj.y, p_obj.z);
+#endif
 	bssrdf->mult = RGBSpectrum::FromRGB(vals);
 
 	return bssrdf;
-
-
 }
 
 
@@ -246,5 +252,3 @@ KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const Transform &xform,
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
     return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap);
 }
-
-

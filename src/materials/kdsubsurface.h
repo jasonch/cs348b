@@ -1,4 +1,3 @@
-
 /*
     pbrt source code Copyright(c) 1998-2010 Matt Pharr and Greg Humphreys.
 
@@ -40,23 +39,37 @@ public:
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
             Reference<Texture<float> > e,
-            Reference<Texture<float> > bump) {
-        Kd = kd;
-        Kr = kr;
-        meanfreepath = mfp;
-        eta = e;
-        bumpMap = bump;
-    }
+            Reference<Texture<float> > bump);
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
     BSSRDF *GetBSSRDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
+private: 
+	void initializeArrays(int nx, int ny, int nz);
+	unsigned int saveToArray(const std::string &txt, char ch);
+	void openGrid(const char* file, double* grid);
+	int openTempDist(const char* file);
+	void getMinMaxTemperatures();
+
+	double getTempdist(int x, int y, int z) const {
+		return tempdist[ x* ny* nz + y * nz + z ];
+	}
+	void setTempdist(int x, int y, int z, double val) {
+		tempdist[ x* ny* nz + y * nz + z ] = val;
+	}
+
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
     Reference<Texture<float> > meanfreepath, eta, bumpMap;
+	double* tempdist;
+	double* gridX;
+	double* gridY;
+	double* gridZ;
+	double maxTemp, minTemp;
+	int nx, ny, nz;
 };
 
 
