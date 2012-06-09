@@ -32,6 +32,8 @@
 #include "pbrt.h"
 #include "material.h"
 
+#define NUMVOXELS 100
+
 // KdSubsurfaceMaterial Declarations
 class KdSubsurfaceMaterial : public Material {
 public:
@@ -40,23 +42,26 @@ public:
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
             Reference<Texture<float> > e,
-            Reference<Texture<float> > bump) {
-        Kd = kd;
-        Kr = kr;
-        meanfreepath = mfp;
-        eta = e;
-        bumpMap = bump;
-    }
+            Reference<Texture<float> > bump);
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
     BSSRDF *GetBSSRDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
+private: 
+	unsigned int saveToArray(const std::string &txt, char ch);
+	void openGrid(const char* file, float* grid);
+	int openTempDist(const char* file);
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
     Reference<Texture<float> > meanfreepath, eta, bumpMap;
+	float tempdist[NUMVOXELS][NUMVOXELS][NUMVOXELS];
+	float gridX[NUMVOXELS];
+	float gridY[NUMVOXELS];
+	float gridZ[NUMVOXELS];
+	float maxTemp, minTemp;
 };
 
 

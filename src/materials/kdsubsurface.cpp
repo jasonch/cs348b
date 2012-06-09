@@ -1,4 +1,3 @@
-
 /*
     pbrt source code Copyright(c) 1998-2010 Matt Pharr and Greg Humphreys.
 
@@ -39,14 +38,30 @@
 #include <string>
 #include <string.h>
 #include <stdlib.h>
-#define NUMVOXELS 100
-double tempdist[NUMVOXELS][NUMVOXELS][NUMVOXELS];
-double gridX[NUMVOXELS];
-double gridY[NUMVOXELS];
-double gridZ[NUMVOXELS];
 
+KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
+            Reference<Texture<Spectrum> > kr,
+            Reference<Texture<float> > mfp,
+            Reference<Texture<float> > e,
+            Reference<Texture<float> > bump) {
+        Kd = kd;
+        Kr = kr;
+        meanfreepath = mfp;
+        eta = e;
+        bumpMap = bump;
+		minTemp = INFINITY;
+		maxTemp = 2.f;
 
-unsigned int saveToArray(const std::string &txt, char ch)
+		// load temperature file
+		openGrid("gridX", gridX);
+		openGrid("gridY", gridY);
+		openGrid("gridZ", gridZ);
+		openTempDist("tempdist_formatted");
+
+		printf("\nConstructor - maxTemp = %.3f, minTemp = %.3f\n", maxTemp, minTemp);
+}
+
+unsigned int KdSubsurfaceMaterial::saveToArray(const std::string &txt, char ch)
 {
     unsigned int pos = txt.find( ch );
 	if(string::npos == pos) return 0;
@@ -67,7 +82,12 @@ unsigned int saveToArray(const std::string &txt, char ch)
 	int arrayIndex = 0;
     // Decompose statement
     while( pos != std::string::npos ) {
-        tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+        tempdist[i][j][arrayIndex] = atof(txt.substr( initialPos, pos - initialPos + 1 ).c_str());
+		if (tempdist[i][j][arrayIndex] > maxTemp) 
+			maxTemp = tempdist[i][j][arrayIndex];
+		if (tempdist[i][j][arrayIndex] < minTemp)
+			minTemp = tempdist[i][j][arrayIndex];
+
 		arrayIndex++;
         initialPos = pos + 1;
 
@@ -76,11 +96,18 @@ unsigned int saveToArray(const std::string &txt, char ch)
 
     // Add the last one
     tempdist[i][j][arrayIndex] = strtod(txt.substr( initialPos, pos - initialPos + 1 ).c_str(), NULL);
+	if (tempdist[i][j][arrayIndex] > maxTemp) {
+		maxTemp = tempdist[i][j][arrayIndex];
+	}
+	if (tempdist[i][j][arrayIndex] < minTemp) {
+		minTemp = tempdist[i][j][arrayIndex];
+	}
 
+	//printf("saveToArray - maxTemp: %.3f, minTemp: %.3f\n", maxTemp, minTemp);
     return arrayIndex;
 }
 
-void openGrid(const char* file, double* grid){
+void KdSubsurfaceMaterial::openGrid(const char* file, float* grid){
 	string line;
 	std::ifstream myfile (file);
 	int linenumber = 0;
@@ -99,7 +126,7 @@ void openGrid(const char* file, double* grid){
 
 }
 
-int openTempDist(const char* file){
+int KdSubsurfaceMaterial::openTempDist(const char* file){
 	  string line;
 	std::ifstream myfile (file);
 	int linenumber = 0;
@@ -120,9 +147,6 @@ int openTempDist(const char* file){
 
 	return 0;
 }
-
-
-bool runonce = false;
 
 
 // KdSubsurfaceMaterial Method Definitions
@@ -167,14 +191,6 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
     SubsurfaceFromDiffuse(kd, mfp, e, &sigma_a, &sigma_prime_s);	
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
-	
-	if(!runonce){
-		openTempDist("tempdist_formatted");
-		openGrid("gridX", gridX);
-		openGrid("gridY", gridY);
-		openGrid("gridZ", gridZ);
-		runonce  = true;
-	}
 
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
 	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
@@ -182,15 +198,24 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	int k = (int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1;
 	//std::cout << p_obj.x << " " << p_obj.y << " " << p_obj.z << std::endl;
 	//std::cout << i << " " << j << " " << k << std::endl;
-	double temp = tempdist[i][j][k] * 1000.0f;
-	float vals[3] = {0.0f, 0.0f, 0.0f};
-	if(temp > 100.0f){
-		float rgb[3] = {700, 530, 470};
-		Blackbody(rgb, 3, 30.0f*temp, vals);
+	float temp = tempdist[i][j][k];
+	// scale the temperature to the nor	mal charcoal burning temperature range (0-2700C)
+	//printf("temp: %.3f, ", temp);
+	temp = (temp-minTemp)/(maxTemp-minTemp)*2700.f;
+	//printf("temp: %.3f, maxTemp: %.3f, minTemp: %.3f\n", temp, maxTemp, minTemp);
+	assert(temp >= 0.f && temp <= 2701.f);
+
+	float vals[3];
+	if(temp > 300.0f){
+		float rgb[3] = {700.f, 530.f, 470.f};
+		Blackbody(rgb, 3, temp, vals);
 		//std::cout << temp << ": " << vals[0] << " " << vals[1] << " " << vals[2] << std::endl;
+		bssrdf->mult = 10*RGBSpectrum::FromRGB(vals);
+
+		printf("temp: %.3f, vals [%.3f, %.3f, %.3f]\n",temp, vals[0], vals[1], vals[2]);
+		bssrdf->mult.Print(stdout); printf("\n");
 	}
 
-	bssrdf->mult = RGBSpectrum::FromRGB(vals);
 
 	/*
 	// for now...
