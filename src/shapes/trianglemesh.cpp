@@ -178,6 +178,19 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
     float tu = b0*uvs[0][0] + b1*uvs[1][0] + b2*uvs[2][0];
     float tv = b0*uvs[0][1] + b1*uvs[1][1] + b2*uvs[2][1];
 
+	/*
+	Point currentP = ray(t);
+	BBox ob = WorldBound();
+	float xnorm = (currentP.x - ob.pMin.x) / (ob.pMax.x - ob.pMin.x);
+	float ynorm = (currentP.y - ob.pMin.y) / (ob.pMax.y - ob.pMin.y);
+	float znorm = (currentP.z - ob.pMin.z) / (ob.pMax.z - ob.pMin.z);
+	tu = xnorm; //0.67 * xnorm + 0.32 * ynorm;
+	tv = znorm; //0.67 * znorm + 0.32 * ynorm;
+	
+	if(xnorm < 0.0 || xnorm > 1.0){
+		printf("%f\n", xnorm);
+	}
+	*/
     // Test intersection against alpha texture, if present
     if (ray.depth != -1) {
     if (mesh->alphaTexture) {
@@ -371,8 +384,11 @@ TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o
     bool discardDegnerateUVs = params.FindOneBool("discarddegenerateUVs", false);
     // XXX should complain if uvs aren't an array of 2...
     if (uvs) {
+		printf("Found UVs!\n");
         if (nuvi < 2 * npi) {
             Error("Not enough of \"uv\"s for triangle mesh.  Expencted %d, "
+                  "found %d.  Discarding.", 2*npi, nuvi);
+			printf("Not enough of \"uv\"s for triangle mesh.  Expencted %d, "
                   "found %d.  Discarding.", 2*npi, nuvi);
             uvs = NULL;
         }
@@ -380,6 +396,9 @@ TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o
             Warning("More \"uv\"s provided than will be used for triangle "
                     "mesh.  (%d expcted, %d found)", 2*npi, nuvi);
     }
+	if(uvs){
+		printf("UVs loaded\n");
+	}
     if (!vi || !P) return NULL;
     const Vector *S = params.FindVector("S", &nsi);
     if (S && nsi != npi) {

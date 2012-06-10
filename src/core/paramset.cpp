@@ -293,12 +293,16 @@ float ParamSet::FindOneFloat(const string &name, float d) const {
 
 
 const float *ParamSet::FindFloat(const string &name, int *n) const {
-    for (uint32_t i = 0; i < floats.size(); ++i)
+	//printf("finding float with name %s\n", name);
+    for (uint32_t i = 0; i < floats.size(); ++i){
+		//printf("got name %s\n", floats[i]->name);
+		//printf("%d\n", i);
         if (floats[i]->name == name) {
             *n = floats[i]->nItems;
             floats[i]->lookedUp = true;
             return floats[i]->data;
         }
+	}
     return NULL;
 }
 

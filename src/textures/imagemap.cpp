@@ -89,6 +89,7 @@ ImageTexture<Tmemory,
     Tmemory mem = mipmap->Lookup(s, t, dsdx, dtdx, dsdy, dtdy);
     Treturn ret;
     convertOut(mem, &ret);
+
     return ret;
 }
 
