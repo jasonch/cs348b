@@ -54,10 +54,16 @@ private:
 	void getMinMaxTemperatures();
 
 	double getTempdist(int x, int y, int z) const {
-		return tempdist[ x* ny* nz + y * nz + z ];
+		int i = Clamp(x, 0, nx-1);
+		int j = Clamp(y, 0, ny-1);
+		int k = Clamp(z, 0, nz-1);
+		return tempdist[ i* ny* nz + j * nz + k ];
 	}
 	void setTempdist(int x, int y, int z, double val) {
-		tempdist[ x* ny* nz + y * nz + z ] = val;
+		int i = Clamp(x, 0, nx-1);
+		int j = Clamp(y, 0, ny-1);
+		int k = Clamp(z, 0, nz-1);
+		tempdist[ i* ny* nz + j * nz + k ] = val;
 	}
 
 private:
