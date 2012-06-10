@@ -182,7 +182,11 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     else
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
-
+	
+	// Evaluate textures for _MatteMaterial_ material and allocate BRDF
+    Spectrum r = Kd->Evaluate(dgs).Clamp();
+    bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+    
 	return bsdf;
 }
 
@@ -190,6 +194,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
+	//return NULL;
 	assert(tempdist != NULL && gridX != NULL && gridY != NULL && gridZ != NULL);
 	//printf("dgGeom (%.3f, %.3f, %.3f)\n", dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
     float e = eta->Evaluate(dgShading);
@@ -202,19 +207,10 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	bssrdf->mult = CoefficientSpectrum<3>(1.f);
 
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
-	int i = (int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1;
-	int j = (int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1;
-	int k = (int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1;
+	int i = Clamp((int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1, 0, nx-1);
+	int j = Clamp((int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1, 0, ny-1);
+	int k = Clamp((int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1, 0, nz-1);
 
-	if( i >= nx ){
-		i = nx-1;
-	}
-	if( j >= ny ){
-		j = ny-1;
-	}
-	if( k >= nz ){
-		k = nz-1;
-	}
 
 	double temp = getTempdist(i,j,k);
 	// scale temp to normal charcoal burning temperatures
@@ -224,15 +220,15 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	if(temp > 400.0f){	
+	if (temp < 500.f) 
+		// no pyrolysis, don't even do subsurface scattering
+		return NULL; 
+
+	if(temp >= 500.0f){	
 		float rgb[3] = {700, 530, 470};
 		Blackbody(rgb, 3, temp, vals);
-		/*
-		vals[0] = temp * 0.5f;
-		vals[1] = 1.0f - temp*0.5f;
-		vals[2] = 0.0f;
-		*/
-		bssrdf->mult = 20*RGBSpectrum::FromRGB(vals);
+
+		bssrdf->mult = RGBSpectrum::FromRGB(vals);
 	}
 	//bssrdf->mult.Print(stdout); printf("\n");
 
@@ -248,8 +244,8 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const Transform &xform,
         const TextureParams &mp) {
-    float Kd[3] = { .5, .5, .5 };
-    Reference<Texture<Spectrum> > kd = mp.GetSpectrumTexture("Kd", Spectrum::FromRGB(Kd));
+  
+    Reference<Texture<Spectrum> > kd = mp.GetSpectrumTexture("Kd", Spectrum(.5f));
     Reference<Texture<float> > mfp = mp.GetFloatTexture("meanfreepath", 1.f);
     Reference<Texture<float> > ior = mp.GetFloatTexture("index", 1.3f);
     Reference<Texture<Spectrum> > kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));

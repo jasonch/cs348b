@@ -37,10 +37,12 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
     "point P" [ -10 0 -10  10 0 -10   10 0 10   -10 0 10 ]
 
 
-#Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 6 "float vscale" 6
+Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_02.exr" "float uscale" 6 "float vscale" 6
+
 AttributeBegin
-Material "kdsubsurface" "color Kd" [10.0 10.0 10.0] "float meanfreepath" [.7] "color Kr" [.9 .9 .9] #"texture tex" "coal"
-#Material "matte" "color Kd" [.8 .1 .1]
+Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" 
+#Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "color Kd" [10.0 10.0 10.0]
+
 #Translate 15 0 10
 #Scale 1.25 1.25 1.25
 #Include "geometry/room-teapot.pbrt"
