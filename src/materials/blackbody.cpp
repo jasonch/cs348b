@@ -148,11 +148,33 @@ int BlackbodyMaterial::openTempDist(const char* file){
 
 double BlackbodyMaterial::getTempByDGeom(const DifferentialGeometry& dgGeom) const {
 	Point p_obj = (*dgGeom.shape->WorldToObject)(dgGeom.p);
-	int i = Clamp((int)((p_obj.x - gridX[0]) / (gridX[1] - gridX[0])) + 1, 0, nx-1);
-	int j = Clamp((int)((p_obj.y - gridY[0]) / (gridY[1] - gridY[0])) + 1, 0, ny-1);
-	int k = Clamp((int)((p_obj.z - gridZ[0]) / (gridZ[1] - gridZ[0])) + 1, 0, nz-1);
+	double Xw = gridX[1] - gridX[0];
+	double Yw = gridY[1] - gridY[0];
+	double Zw = gridZ[1] - gridZ[0];
+	int i = Clamp((int)((p_obj.x - gridX[0]) / (Xw)) + 1, 0, nx-1);
+	int j = Clamp((int)((p_obj.y - gridY[0]) / (Yw)) + 1, 0, ny-1);
+	int k = Clamp((int)((p_obj.z - gridZ[0]) / (Zw)) + 1, 0, nz-1);
 
-	return getTempdist(i,j,k);
+	if(i==0||j==0||k==0||i==nx-1||j==ny-1||k==nz-1){
+			return getTempdist(i,j,k);		
+	}
+
+	float a = ( p_obj.x - (gridX[0] + Xw * (i-1)) ) / Xw;
+	float b = ( p_obj.y - (gridY[0] + Yw * (j-1)) ) / Yw;
+	float c = ( p_obj.z - (gridZ[0] + Zw * (k-1)) ) / Zw;
+	
+	double temp = 
+	(1-a)*(1-b)*(1-c)*getTempdist(i,j,k) + 
+		(a)*(1-b)*(1-c)*getTempdist(i+1,j,k) + 
+		(1-a)*(b)*(1-c)*getTempdist(i,j+1,k) + 
+		(1-a)*(1-b)*(c)*getTempdist(i,j,k+1) + 
+		(a)*(b)*(1-c)*getTempdist(i+1,j+1,k) + 
+		(1-a)*(b)*(c)*getTempdist(i,j+1,k+1) + 
+		(a)*(1-b)*(c)*getTempdist(i+1,j,k+1) + 
+		(a)*(b)*(c)*getTempdist(i+1,j+1,k+1);
+	
+	return temp;
+
 }
 
 Spectrum BlackbodyMaterial::getTempSpectrum(double temp) {

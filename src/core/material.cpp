@@ -39,6 +39,8 @@ void Material::Bump(const Reference<Texture<float> > &d,
                     const DifferentialGeometry &dgGeom,
                     const DifferentialGeometry &dgs,
                     DifferentialGeometry *dgBump) {
+	//printf("creating bumpmap!!\n");
+
     // Compute offset positions and evaluate displacement texture
     DifferentialGeometry dgEval = dgs;
 

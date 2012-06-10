@@ -281,6 +281,7 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
     // Evaluate BSSRDF and possibly compute subsurface scattering
     BSSRDF *bssrdf = isect.GetBSSRDF(ray, arena);
     if (bssrdf && octree) {
+		/*
         Spectrum sigma_a  = bssrdf->sigma_a();
         Spectrum sigmap_s = bssrdf->sigma_prime_s();
         Spectrum sigmap_t = sigmap_s + sigma_a;
@@ -293,13 +294,21 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
             Spectrum Ft = Spectrum(1.f) - fresnel.Evaluate(AbsDot(wo, n));
             float Fdt = 1.f - Fdr(bssrdf->eta());
             L += (bssrdf->multiplier())*(INV_PI * Ft) * (Fdt * Mo);
-			//L += bssrdf->multiplier();
+			L += bssrdf->multiplier();
             PBRT_SUBSURFACE_FINISHED_OCTREE_LOOKUP();
-        }
-    }
-    L += UniformSampleAllLights(scene, renderer, arena, p, n,
+        }*/
+		L += 0.1 * bssrdf->multiplier();
+		 L += 0.9 * UniformSampleAllLights(scene, renderer, arena, p, n,
         wo, isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
         bsdfSampleOffsets);
+    } else {
+		 L += UniformSampleAllLights(scene, renderer, arena, p, n,
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
+        bsdfSampleOffsets);
+	}
+	
+	
+   
     if (ray.depth < maxSpecularDepth) {
         // Trace rays for specular reflection and refraction
         L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample,

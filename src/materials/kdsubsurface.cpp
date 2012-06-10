@@ -97,7 +97,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
-
+	//return NULL;
     float e = eta->Evaluate(dgShading);
     float mfp = meanfreepath->Evaluate(dgShading);
     Spectrum kd = Kd->Evaluate(dgShading).Clamp();
@@ -108,26 +108,59 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 	double temp = blackbody->getTempByDGeom(dgGeom);
 	// scale temp to normal charcoal burning temperatures
-	temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
+	//temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	if (temp < 600.f) 
+	float pyrolysis_thre = 400.0f;
+	if (temp < pyrolysis_thre) 
 		// no pyrolysis, don't even do subsurface scattering
 		return NULL; 
 
 	
 	float rgb[3] = {700, 530, 470};
 	Blackbody(rgb, 3, temp, vals);
+	//normalize vals
+	float sum = vals[0] + vals[1] + vals[2];
+	//if(dgGeom.p.x > 0){
+	if(temp < pyrolysis_thre+500.0f){
+		sum *= (temp-pyrolysis_thre) / (500.0f);
+	}
+	
+	vals[0] /= sum;
+	vals[1] /= sum;
+	vals[2] /= sum;
+	//}
+	Spectrum rgbsp = RGBSpectrum::FromRGB(vals);
+	float xyz[3];
+	rgbsp.ToXYZ(xyz);
 
-	float scale = temp/4000.f;
+	//xyz[0] *= 0.2;
+	//xyz[1] *= 0.2;
+	//xyz[2] *= 0.2;
 
-	bssrdf->mult = 10*scale*RGBSpectrum::FromRGB(vals);
-
+	bssrdf->mult = RGBSpectrum::FromXYZ(xyz);
+	
+	/*
+	float wavelengths[100];
+	for(int k=0; k<100;k++){
+		wavelengths[k] = 400 + 3*k;
+	}
+	float vals[100];
+	Blackbody(wavelengths, 100, temp, vals);
+	for(int k=0; k<100;k++){
+		vals[k] *= 0.1;
+	}
+	RGBSpectrum::
+	bssrdf->mult = Spectrum::FromSampled(wavelengths, vals, 100);
+	*/
 #if VDB
 	{
 		float rgb[3];
 		bssrdf->mult.ToRGB(rgb);
+		//rgb[0] = vals[0];
+		//rgb[1] = vals[1];
+		//rgb[2] = vals[2];
 		vdb_color(rgb[0], rgb[1], rgb[2]);
 		vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
 	}

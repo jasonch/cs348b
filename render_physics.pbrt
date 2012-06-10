@@ -25,8 +25,8 @@ Rotate 90 1 0 0
 AttributeEnd
 
 #floor
-Texture "tmap" "color" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
-Texture "tbump-tex" "float" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
+Texture "tmap" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 6 "float vscale" 6
+Texture "tbump-tex" "float" "imagemap" "string filename" "textures/bumpmap.exr" "float uscale" 6 "float vscale" 6
 Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float  tex2" [-.25]
 Material "substrate" "texture Kd" "tmap" 
 	 "color Ks" [.5 .5 .5] "float uroughness" [.05]
@@ -37,9 +37,13 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
     "point P" [ -10 0 -10  10 0 -10   10 0 10   -10 0 10 ]
 
 
-Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 1.0 "float vscale" 1.0
+Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 2.0 "float vscale" 2.0
+
+
 
 AttributeBegin
+Texture "tbump-tex" "float" "imagemap" "string filename" ["textures/bumpmap.exr"] "float uscale" 2.0 "float vscale" 2.0
+Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float tex2" [-5.5]
 Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" 
 #Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "color Kd" [10.0 10.0 10.0]
 
@@ -51,6 +55,7 @@ Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "textur
 
 Scale 0.03 0.03 0.03
 Translate -5 0 0 
+Rotate 270 1 0 0
 Include "physics.pbrt"
 
 
