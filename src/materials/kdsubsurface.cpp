@@ -43,6 +43,9 @@
 #include <stdlib.h>
 #include "materials/blackbody.h"
 
+#define MAX_TEMP_TO_BSSRDF 3000
+#define MIN_TEMP_FOR_PYROLYSIS 500
+
 KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
@@ -73,25 +76,20 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
 	
 	double temp = blackbody->getTempByDGeom(dgGeom);
-	temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
-	// if temperature is below pyrolysis threshold
-	// Evaluate textures for _MatteMaterial_ material and allocate BRDF
-	Spectrum r = Kd->Evaluate(dgs).Clamp();
-	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+	if (temp < MAX_TEMP_TO_BSSRDF) {
+		// if temperature is below pyrolysis threshold
+		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
+		Spectrum r = Kd->Evaluate(dgs).Clamp();
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+		return bsdf;
+	}
+	
+	Spectrum heat = blackbody->getTempSpectrum(temp);
+	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
+
 	return bsdf;
-	/*
-	float vals[3] = {1.0f, 1.0f, 1.0f};
-	float rgb[3] = {700, 530, 470};
-	Blackbody(rgb, 3, temp, vals);
-	vals[1] *= 2.f;
-	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(RGBSpectrum::FromRGB(vals)));
-#if VDB
-	vdb_color(vals[0], vals[1], vals[2]);
-	vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
-#endif
-	return bsdf;
-	*/
+
 }
 
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
@@ -108,27 +106,25 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 	double temp = blackbody->getTempByDGeom(dgGeom);
 	// scale temp to normal charcoal burning temperatures
-	temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
+	//temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	if (temp < 600.f) 
-		// no pyrolysis, don't even do subsurface scattering
+	if (temp >= MAX_TEMP_TO_BSSRDF) 
+		// pyrolysis is occuring at the surface
 		return NULL; 
-
+	if (temp < MIN_TEMP_FOR_PYROLYSIS) 
+		return NULL; // no pyrolysis
 	
-	float rgb[3] = {700, 530, 470};
-	Blackbody(rgb, 3, temp, vals);
 
-	float scale = temp/4000.f;
-
-	bssrdf->mult = 10*scale*RGBSpectrum::FromRGB(vals);
-
+	bssrdf->mult = blackbody->getTempSpectrum(temp);
+	
 #if VDB
 	{
 		float rgb[3];
 		bssrdf->mult.ToRGB(rgb);
 		vdb_color(rgb[0], rgb[1], rgb[2]);
+		//vdb_color(vals[0], vals[1], vals[2]);
 		vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
 	}
 #endif
