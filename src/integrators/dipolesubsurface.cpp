@@ -292,8 +292,7 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
             FresnelDielectric fresnel(1.f, bssrdf->eta());
             Spectrum Ft = Spectrum(1.f) - fresnel.Evaluate(AbsDot(wo, n));
             float Fdt = 1.f - Fdr(bssrdf->eta());
-            L += (bssrdf->multiplier())*(INV_PI * Ft) * (Fdt * Mo);
-			//L += bssrdf->multiplier();
+            L += (bssrdf->multiplier()) * (INV_PI * Ft) * (Fdt * Mo);
             PBRT_SUBSURFACE_FINISHED_OCTREE_LOOKUP();
         }
     }

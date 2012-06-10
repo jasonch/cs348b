@@ -44,7 +44,11 @@
 #include "materials/blackbody.h"
 
 #define MAX_TEMP_TO_BSSRDF 3000
-#define MIN_TEMP_FOR_PYROLYSIS 500
+#define MIN_TEMP_FOR_PYROLYSIS 800
+#define BSSRDF_ALPHA 0.2
+
+float minBump = INFINITY;
+float maxBump = -8.f;
 
 KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
@@ -117,7 +121,17 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 		return NULL; // no pyrolysis
 	
 
-	bssrdf->mult = blackbody->getTempSpectrum(temp);
+	float bumpHeight = bumpMap->Evaluate(dgGeom);
+	if (bumpHeight < minBump ) {
+		printf("min bump: %.3f\n", bumpHeight);
+		minBump = bumpHeight;
+	}
+	if (bumpHeight > maxBump ) {
+		printf("max bump: %.3f\n", bumpHeight);
+		maxBump = bumpHeight;
+	}
+
+	bssrdf->mult =fabs(bumpHeight)*temp/MAX_TEMP_TO_BSSRDF*blackbody->getTempSpectrum(temp);
 	
 #if VDB
 	{

@@ -54,12 +54,18 @@ BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
     // Evaluate textures for _MatteMaterial_ material and allocate BRDF
     Spectrum r = Kd->Evaluate(dgs).Clamp();
-	//Spectrum r = blackbody->getTempSpectrum(blackbody->getTempByDGeom(dgGeom));
+	
+	double temp = blackbody->getTempByDGeom(dgGeom);
+	Spectrum heat = blackbody->getTempSpectrum(temp);
+
     float sig = Clamp(sigma->Evaluate(dgs), 0.f, 90.f);
     if (sig == 0.)
         bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
     else
         bsdf->Add(BSDF_ALLOC(arena, OrenNayar)(r, sig));
+	
+	if (temp > 400.f)
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
 
     return bsdf;
 }
