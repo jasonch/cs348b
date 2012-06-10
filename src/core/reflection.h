@@ -502,7 +502,7 @@ class BSSRDF {
 public:
     // BSSRDF Public Methods
     BSSRDF(const Spectrum &sa, const Spectrum &sps, float et, const Spectrum &mt = CoefficientSpectrum<3>(1.f))
-        : e(et), sig_a(sa), sigp_s(sps) { }
+        : e(et), sig_a(sa), sigp_s(sps), mult(mt) { }
     float eta() const { return e; }
     Spectrum sigma_a() const { return sig_a; }
     Spectrum sigma_prime_s() const { return sigp_s; }

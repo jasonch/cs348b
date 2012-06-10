@@ -60,6 +60,7 @@ public:
         minSampleDist = mindist;
         filename = fn;
         octree = NULL;
+		printf("max depth: %d\n", maxSpecularDepth);
     }
     ~DipoleSubsurfaceIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,

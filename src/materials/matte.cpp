@@ -30,6 +30,15 @@
 #include "diffgeom.h"
 #include "texture.h"
 #include "volume.h"
+#include "materials/blackbody.h"
+
+MatteMaterial::MatteMaterial(Reference<Texture<Spectrum> > kd,
+              Reference<Texture<float> > sig,
+              Reference<Texture<float> > bump)
+        : Kd(kd), sigma(sig), bumpMap(bump) {
+
+	blackbody = new BlackbodyMaterial("tempdist2", "gridX2", "gridY2", "gridZ2");
+}
 
 // MatteMaterial Method Definitions
 BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
@@ -45,27 +54,16 @@ BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
     // Evaluate textures for _MatteMaterial_ material and allocate BRDF
     Spectrum r = Kd->Evaluate(dgs).Clamp();
+	//Spectrum r = blackbody->getTempSpectrum(blackbody->getTempByDGeom(dgGeom));
     float sig = Clamp(sigma->Evaluate(dgs), 0.f, 90.f);
     if (sig == 0.)
         bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
     else
         bsdf->Add(BSDF_ALLOC(arena, OrenNayar)(r, sig));
+
     return bsdf;
 }
 
-BSSRDF *MatteMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
-        const DifferentialGeometry &dgShading, MemoryArena &arena) const {
-	
-	return NULL; // return to default
-
-	float e = 1.3f;//eta->Evaluate(dgShading);
-	
-	float scale = .5f;
-	float red[3] = {1.f, 0.f, 0.f};
-	Spectrum redSpectrum(RGBSpectrum::FromRGB(red));
-    return BSDF_ALLOC(arena, BSSRDF)(scale * redSpectrum,
-        scale * redSpectrum, e);
-}
 
 
 

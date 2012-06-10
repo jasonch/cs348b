@@ -32,19 +32,17 @@
 #include "pbrt.h"
 #include "material.h"
 
+class BlackbodyMaterial;
+
 // MatteMaterial Declarations
 class MatteMaterial : public Material {
 public:
     // MatteMaterial Public Methods
     MatteMaterial(Reference<Texture<Spectrum> > kd,
                   Reference<Texture<float> > sig,
-                  Reference<Texture<float> > bump)
-        : Kd(kd), sigma(sig), bumpMap(bump) {
-    }
+                  Reference<Texture<float> > bump);
+
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
-                  const DifferentialGeometry &dgShading,
-                  MemoryArena &arena) const;
-	BSSRDF *GetBSSRDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
 
@@ -52,6 +50,8 @@ private:
     // MatteMaterial Private Data
     Reference<Texture<Spectrum> > Kd;
     Reference<Texture<float> > sigma, bumpMap;
+
+	BlackbodyMaterial *blackbody;
 };
 
 
