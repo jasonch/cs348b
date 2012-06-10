@@ -7,11 +7,11 @@ Scale -1 1 1
 LookAt 18 5.5 2    15.5 .9 10   0 1 0
 Camera "perspective" "float fov" [40]
 
-Sampler "lowdiscrepancy" "integer pixelsamples" [4] #[16]
+Sampler "lowdiscrepancy" "integer pixelsamples" [16]
 PixelFilter "box"
 
 SurfaceIntegrator "dipolesubsurface" "float minsampledistance" [.1]
-    "float maxerror" [.05]
+    "float maxerror" [.05] "integer maxdepth" [10]
 
 WorldBegin
 
@@ -19,8 +19,8 @@ WorldBegin
 
 AttributeBegin
 Rotate 90 1 0 0 
-    LightSource "infinite" "color L" [8 8 8] "integer nsamples" [4] #[16] 
-        "string mapname" ["textures/grace_latlong.exr"]#skylight-sunset.exr"]
+    LightSource "infinite" "color L" [1. 1. 1.] "integer nsamples" [4] #[16] 
+        #"string mapname" ["textures/grace_latlong.exr"]#skylight-sunset.exr"]
         #"string mapname" ["textures/skylight-sunset.exr"]
 AttributeEnd
 
@@ -40,8 +40,8 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
 Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_02.exr" "float uscale" 6 "float vscale" 6
 
 AttributeBegin
-Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" 
-#Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "color Kd" [10.0 10.0 10.0]
+Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.2 .2 .2] "texture Kd" "coal" "texture bumpmap" "sbump"
+#Material "matte" "texture Kd" "coal"
 
 #Translate 15 0 10
 #Scale 1.25 1.25 1.25

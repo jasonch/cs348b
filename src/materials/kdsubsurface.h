@@ -31,6 +31,8 @@
 #include "pbrt.h"
 #include "material.h"
 
+class BlackbodyMaterial;
+
 // KdSubsurfaceMaterial Declarations
 class KdSubsurfaceMaterial : public Material {
 public:
@@ -46,36 +48,13 @@ public:
     BSSRDF *GetBSSRDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
-private: 
-	void initializeArrays(int nx, int ny, int nz);
-	unsigned int saveToArray(const std::string &txt, char ch);
-	void openGrid(const char* file, double* grid);
-	int openTempDist(const char* file);
-	void getMinMaxTemperatures();
-
-	double getTempdist(int x, int y, int z) const {
-		int i = Clamp(x, 0, nx-1);
-		int j = Clamp(y, 0, ny-1);
-		int k = Clamp(z, 0, nz-1);
-		return tempdist[ i* ny* nz + j * nz + k ];
-	}
-	void setTempdist(int x, int y, int z, double val) {
-		int i = Clamp(x, 0, nx-1);
-		int j = Clamp(y, 0, ny-1);
-		int k = Clamp(z, 0, nz-1);
-		tempdist[ i* ny* nz + j * nz + k ] = val;
-	}
-
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
     Reference<Texture<float> > meanfreepath, eta, bumpMap;
-	double* tempdist;
-	double* gridX;
-	double* gridY;
-	double* gridZ;
-	double maxTemp, minTemp;
-	int nx, ny, nz;
+
+	BlackbodyMaterial *blackbody;
+	double minTemp, maxTemp;
 };
 
 
