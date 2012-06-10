@@ -56,11 +56,15 @@ KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
         eta = e;
         bumpMap = bump;
 		tempdist = gridX = gridY = gridZ = NULL;
-
+		printf("1\n");
 		openTempDist("tempdist2");
+		printf("2\n");
 		openGrid("gridX2", gridX);
+		printf("3\n");
 		openGrid("gridY2", gridY);
+		printf("4\n");
 		openGrid("gridZ2", gridZ);
+		printf("5\n");
 
 		getMinMaxTemperatures();
 		printf("Constructor - Max Temp: %.3f, Min Temp: %.3f\n", maxTemp, minTemp);
