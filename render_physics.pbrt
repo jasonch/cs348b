@@ -7,6 +7,8 @@ Scale -1 1 1
 LookAt 20 10 4    15.5 -2 10   0 1 0
 Camera "perspective" "float fov" [50]
 
+
+
 Sampler "lowdiscrepancy" "integer pixelsamples" [4] #[16]
 PixelFilter "box"
 
@@ -45,11 +47,11 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
 
 
 # coal surface texture
-Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 2.0 "float vscale" 2.0
+Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_02.exr" "float uscale" 1.0 "float vscale" 1.0
 # coal bump map
 AttributeBegin
-Texture "logbump-text" "float" "imagemap" "string filename" ["textures/bumpmap.exr"] "float uscale" 2.0 "float vscale" 2.0
-Texture "logbump" "float" "scale" "texture tex1" "logbump-tex" "float tex2" [-5.5]
+Texture "logbump-text" "float" "imagemap" "string filename" ["textures/burned_wood_02_bw.exr"] "float uscale" 1.0 "float vscale" 1.0
+Texture "logbump" "float" "scale" "texture tex1" "logbump-text" "float tex2" [-5.5]
 # coal material
 Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" "string tempFile" "tempdist3" "string xFile" "gridX2" "string yFile" "gridY2" "string zFile" "gridZ2" "texture bumpmap" "logbump"
 
@@ -60,7 +62,14 @@ Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "textur
 #Rotate 180 0 1 0
 
 #Scale 0.03 0.03 0.03
-Scale 0.06 0.06 0.06
+#Scale 0.06 0.06 0.06
+#Translate -5 0 -30 
+#Rotate 270 1 0 0
+#Include "physics.pbrt"
+
+
+
+Scale 0.03 0.03 0.03
 Translate -5 0 -30 
 Rotate 270 1 0 0
 Include "physics.pbrt"

@@ -97,6 +97,8 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 	if(temp > 2500) temp = 2500;
 
+
+
 	if (temp < minPyroTemp) {
 		// if temperature is below pyrolysis threshold
 		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
@@ -137,7 +139,17 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 			maxBump = bumpHeight;
 			printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
 		}
-		sum *= 1.f / fabs(bumpHeight);
+
+		
+
+		sum *= min(1.f /(0.5f + fabs(bumpHeight)), 2.0f);
+		//float bumpHeight_normalized = bumpHeight / 2.5;
+		//float scale = 0.9;
+		//float bump =  1 - scale * 0.5f + bumpHeight_normalized * scale;
+
+		//vals[0] = vals[0] * bump / sum;
+		//vals[1] = vals[1] * bump / sum;
+		//vals[2] = vals[2] * bump / sum;
 
 		vals[0] /= sum;
 		vals[1] /= sum;
@@ -236,6 +248,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	bssrdf->mult = Spectrum::FromSampled(wavelengths, vals, 100);
 	*/
 
+	/*
 #if VDB
 	{
 		float rgb[3];
@@ -248,7 +261,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 		vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
 	}
 #endif
-	
+	*/
 
 	return bssrdf;
 }
