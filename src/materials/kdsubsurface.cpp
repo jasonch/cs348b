@@ -20,7 +20,7 @@
 
  */
 
-#define VDB 1
+#define VDB 0
 
 #if VDB
 #include "vdb-win/vdb.h"
@@ -43,8 +43,9 @@
 #include <stdlib.h>
 #include "materials/blackbody.h"
 
-#define MAX_TEMP_TO_BSSRDF 3000
-#define MIN_TEMP_FOR_PYROLYSIS 800
+
+#define MAX_TEMP_TO_BSSRDF 2000
+#define MIN_TEMP_FOR_PYROLYSIS 350
 #define BSSRDF_ALPHA 0.2
 
 float minBump = INFINITY;
@@ -90,17 +91,64 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 	double temp = blackbody->getTempByDGeom(dgGeom);
 
-	if (temp < MAX_TEMP_TO_BSSRDF) {
+	if(temp > 2500) temp = 2500;
+
+	if (temp < MIN_TEMP_FOR_PYROLYSIS) {
 		// if temperature is below pyrolysis threshold
 		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
 		Spectrum r = Kd->Evaluate(dgs).Clamp();
 		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
-		return bsdf;
+		
+	} else if(temp > MAX_TEMP_TO_BSSRDF) {
+		// at high temperature, no texture can be seen and is just like a light source
+		Spectrum heat = blackbody->getTempSpectrum(temp);
+		heat *= (temp / MAX_TEMP_TO_BSSRDF - 1.0) * 0.7 + 1.0;
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
+	} else {
+		//use both texture and subsurface
+		
+		float alpha = (temp - MIN_TEMP_FOR_PYROLYSIS)/ (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+
+		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
+		Spectrum r = (1-alpha) * Kd->Evaluate(dgs).Clamp();
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+		// cap maximum burning temperature
+		if(temp > 5000) temp = 5000.0f;
+
+		float vals[3] = {1.0f, 1.0f, 1.0f};
+		float rgb[3] = {700, 530, 470};
+		Blackbody(rgb, 3, temp, vals);
+		//normalize vals
+		float sum = vals[0] + vals[1] + vals[2];
+		
+		sum *= 0.1 + 1.0 * (MAX_TEMP_TO_BSSRDF - temp) / (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+		
+		// also scale it by bump height
+		float bumpHeight = bumpMap->Evaluate(dgGeom);
+		if (bumpHeight < minBump ) {
+			minBump = bumpHeight;
+			printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
+		}
+		if (bumpHeight > maxBump ) {
+			maxBump = bumpHeight;
+			printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
+		}
+		sum *= 11.f / fabs(bumpHeight);
+
+		vals[0] /= sum;
+		vals[1] /= sum;
+		vals[2] /= sum;
+		
+		Spectrum rgbsp = alpha * RGBSpectrum::FromRGB(vals);
+
+
+
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(rgbsp));
+
+		
 	}
 	
-	Spectrum heat = blackbody->getTempSpectrum(temp);
-	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
-
+	
 	return bsdf;
 
 }
@@ -108,6 +156,9 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
+	// return to default
+    return NULL;
+
 
     float e = eta->Evaluate(dgShading);
     float mfp = meanfreepath->Evaluate(dgShading);
@@ -123,14 +174,37 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	// scale temp to normal charcoal burning temperatures
 	//temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
+	if(temp > 5000) temp = 5000.0f;
+
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
+
 	if (temp >= MAX_TEMP_TO_BSSRDF) 
 		// pyrolysis is occuring at the surface
 		return NULL; 
 	if (temp < MIN_TEMP_FOR_PYROLYSIS) 
 		return NULL; // no pyrolysis
 	
+	float rgb[3] = {700, 530, 470};
+	Blackbody(rgb, 3, temp, vals);
+	//normalize vals
+	float sum = vals[0] + vals[1] + vals[2];
+	//if(dgGeom.p.x > 0){
+	/*
+	if(temp < MIN_TEMP_FOR_PYROLYSIS+800.0f){
+		sum *= 0.3 + (temp-MIN_TEMP_FOR_PYROLYSIS) / (800.0f) * 0.7f;
+	}
+	*/
+
+	sum *= 0.1 + 1.0 * (MAX_TEMP_TO_BSSRDF - temp) / (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+
+	vals[0] /= sum;
+	vals[1] /= sum;
+	vals[2] /= sum;
+	//}
+	Spectrum rgbsp = RGBSpectrum::FromRGB(vals);
+	float xyz[3];
+	rgbsp.ToXYZ(xyz);
 
 	float bumpHeight = bumpMap->Evaluate(dgGeom);
 	if (bumpHeight < minBump ) {
@@ -142,12 +216,29 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 		printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
 	}
 
-	bssrdf->mult = (bumpHeight/11.f)*temp/MAX_TEMP_TO_BSSRDF*blackbody->getTempSpectrum(temp);
+	bssrdf->mult = (bumpHeight/11.f)*blackbody->getTempSpectrum(temp);
 	
+	/*
+	float wavelengths[100];
+	for(int k=0; k<100;k++){
+		wavelengths[k] = 400 + 3*k;
+	}
+	float vals[100];
+	Blackbody(wavelengths, 100, temp, vals);
+	for(int k=0; k<100;k++){
+		vals[k] *= 0.1;
+	}
+	RGBSpectrum::
+	bssrdf->mult = Spectrum::FromSampled(wavelengths, vals, 100);
+	*/
+
 #if VDB
 	{
 		float rgb[3];
 		bssrdf->mult.ToRGB(rgb);
+		//rgb[0] = vals[0];
+		//rgb[1] = vals[1];
+		//rgb[2] = vals[2];
 		vdb_color(rgb[0], rgb[1], rgb[2]);
 		//vdb_color(vals[0], vals[1], vals[2]);
 		vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);

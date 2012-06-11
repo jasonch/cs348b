@@ -624,9 +624,20 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
     BSDF *bsdf = isect.GetBSDF(ray, arena);
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
-    L += UniformSampleAllLights(scene, renderer, arena, p, n,
+
+	//Glowing charcoal
+	BSSRDF *bssrdf = isect.GetBSSRDF(ray, arena);
+	 if (bssrdf){
+		L += 0.1 * bssrdf->multiplier();
+		 L += 0.9 * UniformSampleAllLights(scene, renderer, arena, p, n,
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
+        bsdfSampleOffsets);
+	 } else {
+		L += UniformSampleAllLights(scene, renderer, arena, p, n,
         wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
-        lightSampleOffsets, bsdfSampleOffsets);
+        lightSampleOffsets, bsdfSampleOffsets);     
+	 }
+
     // Compute caustic lighting for photon map integrator
     ClosePhoton *lookupBuf = arena.Alloc<ClosePhoton>(nLookup);
     L += LPhoton(causticMap, nCausticPaths, nLookup, lookupBuf, bsdf,

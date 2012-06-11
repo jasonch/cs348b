@@ -150,6 +150,21 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
                     wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
                     lightSampleOffsets, bsdfSampleOffsets);
+
+	//Glowing charcoal
+	/*
+	BSSRDF *bssrdf = isect.GetBSSRDF(ray, arena);
+	 if (bssrdf){
+		L += 0.1 * bssrdf->multiplier();
+		 L += 0.9 * UniformSampleAllLights(scene, renderer, arena, p, n,
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
+        bsdfSampleOffsets);
+	 } else {
+		L += UniformSampleAllLights(scene, renderer, arena, p, n,
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
+        lightSampleOffsets, bsdfSampleOffsets);     
+	 }
+	 */
     // Compute indirect illumination with virtual lights
     uint32_t lSet = min(uint32_t(sample->oneD[vlSetOffset][0] * nLightSets),
                         nLightSets-1);
