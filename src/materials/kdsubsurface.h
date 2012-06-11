@@ -37,11 +37,15 @@ class BlackbodyMaterial;
 class KdSubsurfaceMaterial : public Material {
 public:
     // KdSubsurfaceMaterial Public Methods
-    KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
+   KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
             Reference<Texture<float> > e,
-            Reference<Texture<float> > bump);
+            Reference<Texture<float> > bump, 
+			const std::string tempFile,  
+			const std::string xFile,  
+			const std::string yFile,
+			const std::string zFile);
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;

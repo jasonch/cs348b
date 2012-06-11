@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #Film "image" "integer xresolution" [900] "integer yresolution" [900]
 Film "image" "integer xresolution" [300] "integer yresolution" [300]
     "string filename" "project.exr"
@@ -41,7 +40,7 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
 Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_02.exr" "float uscale" 6 "float vscale" 6
 
 AttributeBegin
-Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.2 .2 .2] "texture Kd" "coal" "texture bumpmap" "sbump"
+Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.2 .2 .2] "texture Kd" "coal" "texture bumpmap" "sbump" "string tempFile" "tempdist2" "string xFile" "gridX2" "string yFile" "gridY2" "string zFile" "gridZ2"
 #Material "matte" "texture Kd" "coal"
 
 #Translate 15 0 10
@@ -65,71 +64,3 @@ AttributeEnd
 WorldEnd
 
 ###################################
-=======
-#Film "image" "integer xresolution" [900] "integer yresolution" [900]
-Film "image" "integer xresolution" [300] "integer yresolution" [300]
-    "string filename" "project.exr"
-
-
-Scale -1 1 1
-LookAt 18 5.5 2    15.5 .9 10   0 1 0
-Camera "perspective" "float fov" [40]
-
-Sampler "lowdiscrepancy" "integer pixelsamples" [16]
-PixelFilter "box"
-
-SurfaceIntegrator "dipolesubsurface" "float minsampledistance" [.1]
-    "float maxerror" [.05] "integer maxdepth" [10]
-
-WorldBegin
-
-# lights
-
-AttributeBegin
-Rotate 90 1 0 0 
-    LightSource "infinite" "color L" [1. 1. 1.] "integer nsamples" [4] #[16] 
-        #"string mapname" ["textures/grace_latlong.exr"]#skylight-sunset.exr"]
-        #"string mapname" ["textures/skylight-sunset.exr"]
-AttributeEnd
-
-#floor
-Texture "tmap" "color" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
-Texture "tbump-tex" "float" "imagemap" "string filename" "textures/buildingblock.exr" "float uscale" 6 "float vscale" 6
-Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float  tex2" [-.25]
-Material "substrate" "texture Kd" "tmap" 
-	 "color Ks" [.5 .5 .5] "float uroughness" [.05]
-	"float vroughness" [.05]
-	"texture bumpmap" "sbump" 
-Translate 15 0 10
-Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
-    "point P" [ -10 0 -10  10 0 -10   10 0 10   -10 0 10 ]
-
-
-Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_02.exr" "float uscale" 6 "float vscale" 6
-
-AttributeBegin
-Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.2 .2 .2] "texture Kd" "coal" "texture bumpmap" "sbump"
-#Material "matte" "texture Kd" "coal"
-
-#Translate 15 0 10
-#Scale 1.25 1.25 1.25
-#Include "geometry/room-teapot.pbrt"
-Scale 20 20 20
-#Rotate 180 0 1 0
-
-Rotate 90 0 1 0
-#Rotate 270 0 0 1
-Rotate 270 1 0 0
-Scale 0.3 0.3 0.3
-Include "logpile_rotated.pbrt"
-
-#Translate 0 0 10
-#Rotate 180 0 1 0
-#Rotate 90 0 0 1
-#Include "taesung.pbrt"
-AttributeEnd
-
-WorldEnd
-
-###################################
->>>>>>> ce710aa3fcd1bcc4d73239b602c476e4e62aca46

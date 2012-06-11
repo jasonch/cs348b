@@ -20,8 +20,7 @@ WorldBegin
 AttributeBegin
 Rotate 90 1 0 0 
     LightSource "infinite" "color L" [8 8 8] "integer nsamples" [4] #[16] 
-        "string mapname" ["textures/grace_latlong.exr"]#skylight-sunset.exr"]
-        #"string mapname" ["textures/skylight-sunset.exr"]
+        "string mapname" ["textures/grace_latlong.exr"]
 AttributeEnd
 
 #floor
@@ -38,9 +37,12 @@ Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
 
 
 Texture "coal" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 1.0 "float vscale" 1.0
+Texture "logbump-tex" "float" "imagemap" "string filename" ["textures/bumpmap.exr"] "float uscale" 2.0 "float vscale" 2.0
+Texture "logbump" "float" "scale" "texture tex1" "logbump-tex" "float tex2" [-5]
+
 
 AttributeBegin
-Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" 
+Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal"  "texture bumpmap" "logbump"
 #Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "color Kd" [10.0 10.0 10.0]
 
 #Translate 15 0 10

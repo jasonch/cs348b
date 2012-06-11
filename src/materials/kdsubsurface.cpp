@@ -54,7 +54,11 @@ KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
             Reference<Texture<float> > e,
-            Reference<Texture<float> > bump) {
+            Reference<Texture<float> > bump, 
+			const std::string tempFile,  
+			const std::string xFile,  
+			const std::string yFile,
+			const std::string zFile) {
 
 		Kd = kd;
         Kr = kr;
@@ -62,8 +66,11 @@ KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
         eta = e;
         bumpMap = bump;
 
-		blackbody = new BlackbodyMaterial("tempdist2", "gridX2", "gridY2", "gridZ2");
-		blackbody->getMinMaxTemperatures(minTemp, maxTemp);
+		blackbody = NULL;
+		if (tempFile != "") {
+			blackbody = new BlackbodyMaterial(tempFile.c_str(), xFile.c_str(), yFile.c_str(), zFile.c_str());
+			blackbody->getMinMaxTemperatures(minTemp, maxTemp);
+		}
 }
 
 
@@ -79,6 +86,8 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
 	
+	if (blackbody == NULL) return bsdf;
+
 	double temp = blackbody->getTempByDGeom(dgGeom);
 
 	if (temp < MAX_TEMP_TO_BSSRDF) {
@@ -108,6 +117,8 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	
     BSSRDF* bssrdf = BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
 
+	if (blackbody == NULL) return bssrdf;
+
 	double temp = blackbody->getTempByDGeom(dgGeom);
 	// scale temp to normal charcoal burning temperatures
 	//temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
@@ -123,15 +134,15 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 	float bumpHeight = bumpMap->Evaluate(dgGeom);
 	if (bumpHeight < minBump ) {
-		printf("min bump: %.3f\n", bumpHeight);
 		minBump = bumpHeight;
+		printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
 	}
 	if (bumpHeight > maxBump ) {
-		printf("max bump: %.3f\n", bumpHeight);
 		maxBump = bumpHeight;
+		printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
 	}
 
-	bssrdf->mult =fabs(bumpHeight)*temp/MAX_TEMP_TO_BSSRDF*blackbody->getTempSpectrum(temp);
+	bssrdf->mult = (bumpHeight/11.f)*temp/MAX_TEMP_TO_BSSRDF*blackbody->getTempSpectrum(temp);
 	
 #if VDB
 	{
@@ -156,5 +167,10 @@ KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const Transform &xform,
     Reference<Texture<float> > ior = mp.GetFloatTexture("index", 1.3f);
     Reference<Texture<Spectrum> > kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
-    return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap);
+	std::string tempFile = mp.FindString("tempFile");
+	std::string xFile = mp.FindString("xFile");
+	std::string yFile = mp.FindString("yFile");
+	std::string zFile = mp.FindString("zFile");
+
+	return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap, tempFile, xFile, yFile, zFile);
 }
