@@ -1,49 +1,81 @@
 #Film "image" "integer xresolution" [900] "integer yresolution" [900]
-Film "image" "integer xresolution" [300] "integer yresolution" [300]
+Film "image" "integer xresolution" [600] "integer yresolution" [600]
     "string filename" "project.exr"
 
 
 Scale -1 1 1
-LookAt 20 10 4    15.5 -2 10   0 1 0
-Camera "perspective" "float fov" [50]
+LookAt 10 10 16    17 -2.5 9   0 1 0
+Camera "perspective" "float fov" [45]
 
 
 
-Sampler "lowdiscrepancy" "integer pixelsamples" [4] #[16]
+#LookAt 24 10 16    17 -2.5 9    0 1 0
+#Camera "perspective" "float fov" [45]
+
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [64] #[16]
 PixelFilter "box"
 
-SurfaceIntegrator "dipolesubsurface" "float minsampledistance" [.1]
-    "float maxerror" [.05]
-#SurfaceIntegrator "photonmap" "integer causticphotons" [0]
-#	"integer indirectphotons" [400000]
-#	"integer finalgathersamples" [64]
-#	    "bool finalgather" ["true"] "integer nused" [75]
-#     "float maxdist" [1.5]
+#SurfaceIntegrator "dipolesubsurface" "float minsampledistance" [.1]
+#    "float maxerror" [.05]
+SurfaceIntegrator "photonmap" "integer causticphotons" [0]
+	"integer indirectphotons" [500000]
+	"integer finalgathersamples" [64]
+	    "bool finalgather" ["true"] "integer nused" [75]
+     #"float maxdist" [1.5]
 	 
-	 SurfaceIntegrator "igi" "integer nlights" [4]
-    "integer nsets" [4] "float glimit" [.01]
+#	 SurfaceIntegrator "igi" "integer nlights" [1024] "integer maxdepth" [8]
+#    "integer nsets" [16] "float glimit" [10]
 
 WorldBegin
 
 # lights
 
+	#LightSource "point" "color I" [50 50 50] "point from" [17 15 10]
+	#LightSource "distant" "color L" [0.25 0.25 0.2] "point from" [20 20 16] "point to" [10 0 10]
+	#LightSource "distant" "color L" [0.06 0.06 0.035] "point from" [10 20 16] "point to" [10 0 10]
+	
 AttributeBegin
 Rotate 90 1 0 0 
-    LightSource "infinite" "color L" [8 8 8] "integer nsamples" [4] #[16] 
-        "string mapname" ["textures/grace_latlong.exr"]
+    LightSource "infinite" "color L" [0.05 0.05 0.035] "integer nsamples" [4] #[16]  
+        #"string mapname" ["textures/grace_latlong.exr"]
 AttributeEnd
 
 #floor
-Texture "tmap" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 6 "float vscale" 6
-Texture "tbump-tex" "float" "imagemap" "string filename" "textures/bumpmap.exr" "float uscale" 6 "float vscale" 6
-Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float  tex2" [-.25]
-Material "substrate" "texture Kd" "tmap" 
-	 "color Ks" [.5 .5 .5] "float uroughness" [.05]
-	"float vroughness" [.05]
-	"texture bumpmap" "sbump" 
+
+#Texture "tmap" "color" "imagemap" "string filename" "textures/burned_wood_b.exr" "float uscale" 6 "float vscale" 6
+#Texture "tbump-tex" "float" "imagemap" "string filename" "textures/bumpmap.exr" "float uscale" 6 "float vscale" 6
+#Texture "sbump" "float" "scale" "texture tex1" "tbump-tex" "float  tex2" [-.25]
 Translate 15 0 10
-Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
-    "point P" [ -10 0 -10  10 0 -10   10 0 10   -10 0 10 ]
+
+#AttributeBegin
+#Material "matte" "rgb Kd" [0.0 0.0 0.0]
+#Translate 0 -3 0
+#Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
+#    "point P" [ -50 0 -50  50 0 -50   50 0 50   -50 0 50 ]
+#AttributeEnd
+
+AttributeBegin	
+	Scale 0.15 0.15 0.15
+	Rotate 270 1 0 0
+	Translate -52 506 4
+	
+	Texture "sand" "float" "imagemap" "string filename" "textures/sand.exr"  "float uscale" 5 "float vscale" 5
+	Material "substrate" "color Kd" [0.0000 0.0000 0.0000] 
+	 "color Ks" [0.3500 0.3500 0.3500] "float uroughness" [5.5] "texture bumpmap" "sand"
+	"float vroughness" [5.5]
+	
+	Include "floor.pbrt"
+	
+	
+	Texture "rock" "color" "imagemap" "string filename" ["textures/rocks.exr"]
+	Material "substrate" "texture Kd" "rock"
+	 "color Ks" [0.3500 0.3500 0.3500] "float uroughness" [5.5]
+	"float vroughness" [5.5]
+	
+	
+	Include "rocks.pbrt"
+AttributeEnd
 
 
 # coal surface texture

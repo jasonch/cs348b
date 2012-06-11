@@ -45,7 +45,7 @@
 
 
 #define MAX_TEMP_TO_BSSRDF 2000
-#define MIN_TEMP_FOR_PYROLYSIS 350
+#define MIN_TEMP_FOR_PYROLYSIS 800
 #define BSSRDF_ALPHA 0.2
 
 float minBump = INFINITY;
@@ -95,7 +95,8 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 	double temp = blackbody->getTempByDGeom(dgGeom);
 
-	if(temp > 2500) temp = 2500;
+	if(temp > 2500) temp = (temp - 2500)*0.1 + 2500;
+	//if(temp > 3000) temp = 3000;
 
 
 
@@ -108,7 +109,12 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 	} else if(temp > maxBssrdfTemp) {
 		// at high temperature, no texture can be seen and is just like a light source
 		Spectrum heat = blackbody->getTempSpectrum(temp);
-		heat *= (temp / maxBssrdfTemp - 1.0) * 0.7 + 1.0;
+
+		//heat *= (temp / maxBssrdfTemp - 1.0) * 0.7 + 1.0;
+		//heat *= 20.0;
+		float rgb[3];
+		heat.ToRGB(rgb);
+		heat = Spectrum::FromRGB(rgb, SpectrumType::SPECTRUM_ILLUMINANT);
 		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
 	} else {
 		//use both texture and subsurface
@@ -123,7 +129,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 		float vals[3] = {1.0f, 1.0f, 1.0f};
 		float rgb[3] = {700, 530, 470};
-		Blackbody(rgb, 3, temp, vals);
+		Blackbody(rgb, 3, temp*1.5, vals);
 		//normalize vals
 		float sum = vals[0] + vals[1] + vals[2];
 		
@@ -142,7 +148,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 		
 
-		sum *= min(1.f /(0.5f + fabs(bumpHeight)), 2.0f);
+		//sum *= min(1.f /(0.5f + fabs(bumpHeight)), 2.0f);
 		//float bumpHeight_normalized = bumpHeight / 2.5;
 		//float scale = 0.9;
 		//float bump =  1 - scale * 0.5f + bumpHeight_normalized * scale;
@@ -151,11 +157,27 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 		//vals[1] = vals[1] * bump / sum;
 		//vals[2] = vals[2] * bump / sum;
 
+		//sum *= 1.0f / fabs(bumpHeight);
+		float block = 0.f + 0.2f * fabs(bumpHeight);
+		//block = 1.0f;
+
 		vals[0] /= sum;
 		vals[1] /= sum;
 		vals[2] /= sum;
+		vals[0] *= block;
+		vals[1] *= block;
+		vals[2] *= block;
+
+		//float block = fabs(bumpHeight);
+
+#if VDB
+		vdb_color(block/5, 1-block/5, 0.0);
+		vdb_point(dgGeom.u, dgGeom.v, 0.0f);
+		printf("%f\n", bumpHeight);
+#endif
 		
-		Spectrum rgbsp = alpha * RGBSpectrum::FromRGB(vals);
+		
+		Spectrum rgbsp = 1.75f * (alpha) * RGBSpectrum::FromRGB(vals);
 
 
 

@@ -22,11 +22,18 @@
  */
 
 
+#define VDB 0
+
+#if VDB
+#include "vdb-win/vdb.h"
+#endif
 // materials/matte.cpp*
 #include "stdafx.h"
 #include "materials/blackbody.h"
 #include <iostream>
 #include <fstream>
+
+
 
 
 BlackbodyMaterial::BlackbodyMaterial(const char* tempFile, const char* xFile,
@@ -159,6 +166,28 @@ double BlackbodyMaterial::getTempByDGeom(const DifferentialGeometry& dgGeom) con
 	int i = Clamp((int)((p_obj.x - gridX[0]) / (Xw)) + 1, 0, nx-1);
 	int j = Clamp((int)((p_obj.y - gridY[0]) / (Yw)) + 1, 0, ny-1);
 	int k = Clamp((int)((p_obj.z - gridZ[0]) / (Zw)) + 1, 0, nz-1);
+
+	
+	#if VDB
+		float rgb[3];
+		rgb[0] = (float)i / nx;
+		rgb[1] = (float)j / ny;
+		rgb[2] = (float)k / nz;
+		Spectrum heat = Spectrum::FromRGB(rgb, SpectrumType::SPECTRUM_ILLUMINANT);
+		heat.ToRGB(rgb);
+		vdb_color(rgb[0], rgb[1], rgb[2]);
+		vdb_point(rgb[0], rgb[1], rgb[2]);
+
+		vdb_color(1.0, 0.0, 0.0);
+		vdb_point(1.5, 0.0, 0.0);
+		
+		vdb_color(0.0, 1.0, 0.0);
+		vdb_point(.0, 1.5, 0.0);
+
+		vdb_color(0.0, 0.0, 1.0);
+		vdb_point(0.0, 0.0, 1.5);
+		
+	#endif
 
 	if(i==0||j==0||k==0||i==nx-1||j==ny-1||k==nz-1){
 			return getTempdist(i,j,k);		
