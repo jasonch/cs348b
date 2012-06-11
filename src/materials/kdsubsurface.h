@@ -45,7 +45,9 @@ public:
 			const std::string tempFile,  
 			const std::string xFile,  
 			const std::string yFile,
-			const std::string zFile);
+			const std::string zFile,
+			float minPyrolysisTemp,
+			float maxBSSRDFTemp);
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
@@ -59,6 +61,7 @@ private:
 
 	BlackbodyMaterial *blackbody;
 	double minTemp, maxTemp;
+	float minPyroTemp, maxBssrdfTemp;
 };
 
 

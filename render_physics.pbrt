@@ -51,7 +51,7 @@ AttributeBegin
 Texture "logbump-text" "float" "imagemap" "string filename" ["textures/bumpmap.exr"] "float uscale" 2.0 "float vscale" 2.0
 Texture "logbump" "float" "scale" "texture tex1" "logbump-tex" "float tex2" [-5.5]
 # coal material
-Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" "string tempFile" "tempdist2" "string xFile" "gridX2" "string yFile" "gridY2" "string zFile" "gridZ2" "texture bumpmap" "logbump"
+Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "texture Kd" "coal" "string tempFile" "tempdist3" "string xFile" "gridX2" "string yFile" "gridY2" "string zFile" "gridZ2" "texture bumpmap" "logbump"
 
 #Translate 15 0 10
 #Scale 1.25 1.25 1.25
@@ -59,7 +59,8 @@ Material "kdsubsurface"  "float meanfreepath" [.7] "color Kr" [.9 .9 .9] "textur
 #Scale 20 20 20
 #Rotate 180 0 1 0
 
-Scale 0.03 0.03 0.03
+#Scale 0.03 0.03 0.03
+Scale 0.06 0.06 0.06
 Translate -5 0 -30 
 Rotate 270 1 0 0
 Include "physics.pbrt"

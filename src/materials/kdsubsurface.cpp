@@ -59,13 +59,17 @@ KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
 			const std::string tempFile,  
 			const std::string xFile,  
 			const std::string yFile,
-			const std::string zFile) {
+			const std::string zFile,
+			float minPyrolysisTemp,
+			float maxBSSRDFTemp) {
 
 		Kd = kd;
         Kr = kr;
         meanfreepath = mfp;
         eta = e;
         bumpMap = bump;
+		minPyroTemp = minPyrolysisTemp;
+		maxBssrdfTemp = maxBSSRDFTemp;
 
 		blackbody = NULL;
 		if (tempFile != "") {
@@ -93,21 +97,21 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 	if(temp > 2500) temp = 2500;
 
-	if (temp < MIN_TEMP_FOR_PYROLYSIS) {
+	if (temp < minPyroTemp) {
 		// if temperature is below pyrolysis threshold
 		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
 		Spectrum r = Kd->Evaluate(dgs).Clamp();
 		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
 		
-	} else if(temp > MAX_TEMP_TO_BSSRDF) {
+	} else if(temp > maxBssrdfTemp) {
 		// at high temperature, no texture can be seen and is just like a light source
 		Spectrum heat = blackbody->getTempSpectrum(temp);
-		heat *= (temp / MAX_TEMP_TO_BSSRDF - 1.0) * 0.7 + 1.0;
+		heat *= (temp / maxBssrdfTemp - 1.0) * 0.7 + 1.0;
 		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
 	} else {
 		//use both texture and subsurface
 		
-		float alpha = (temp - MIN_TEMP_FOR_PYROLYSIS)/ (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+		float alpha = (temp - minPyroTemp)/ (maxBssrdfTemp - minPyroTemp);
 
 		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
 		Spectrum r = (1-alpha) * Kd->Evaluate(dgs).Clamp();
@@ -121,7 +125,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 		//normalize vals
 		float sum = vals[0] + vals[1] + vals[2];
 		
-		sum *= 0.1 + 1.0 * (MAX_TEMP_TO_BSSRDF - temp) / (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+		sum *= 0.1 + 1.0 * (maxBssrdfTemp - temp) / (maxBssrdfTemp - minPyroTemp);
 		
 		// also scale it by bump height
 		float bumpHeight = bumpMap->Evaluate(dgGeom);
@@ -133,7 +137,7 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 			maxBump = bumpHeight;
 			printf("max bump: %.3f, min bump: %.3f\n", maxBump, minBump);
 		}
-		sum *= 11.f / fabs(bumpHeight);
+		sum *= 1.f / fabs(bumpHeight);
 
 		vals[0] /= sum;
 		vals[1] /= sum;
@@ -262,6 +266,8 @@ KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const Transform &xform,
 	std::string xFile = mp.FindString("xFile");
 	std::string yFile = mp.FindString("yFile");
 	std::string zFile = mp.FindString("zFile");
+	float minPyrolysis = mp.FindFloat("minPyrolysis", MIN_TEMP_FOR_PYROLYSIS);
+	float maxTempForSubSurface = mp.FindFloat("maxSubsurfaceTemp", MAX_TEMP_TO_BSSRDF);
 
-	return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap, tempFile, xFile, yFile, zFile);
+	return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap, tempFile, xFile, yFile, zFile, minPyrolysis, maxTempForSubSurface);
 }
