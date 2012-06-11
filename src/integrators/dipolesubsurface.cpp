@@ -280,7 +280,7 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
     const Normal &n = bsdf->dgShading.nn;
     // Evaluate BSSRDF and possibly compute subsurface scattering
     BSSRDF *bssrdf = isect.GetBSSRDF(ray, arena);
-    if (bssrdf && octree) {
+    if (NULL && bssrdf && octree) {
 		/*
         Spectrum sigma_a  = bssrdf->sigma_a();
         Spectrum sigmap_s = bssrdf->sigma_prime_s();

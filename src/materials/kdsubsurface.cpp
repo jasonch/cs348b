@@ -20,7 +20,7 @@
 
  */
 
-#define VDB 1
+#define VDB 0
 
 #if VDB
 #include "vdb-win/vdb.h"
@@ -43,6 +43,9 @@
 #include <stdlib.h>
 #include "materials/blackbody.h"
 
+#define MAX_TEMP_TO_BSSRDF 2000
+#define MIN_TEMP_FOR_PYROLYSIS 350
+
 KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
@@ -55,7 +58,7 @@ KdSubsurfaceMaterial::KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
         eta = e;
         bumpMap = bump;
 
-		blackbody = new BlackbodyMaterial("tempdist2", "gridX2", "gridY2", "gridZ2");
+		blackbody = new BlackbodyMaterial("tempdist3", "gridX2", "gridY2", "gridZ2");
 		blackbody->getMinMaxTemperatures(minTemp, maxTemp);
 }
 
@@ -73,25 +76,55 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
 	
 	double temp = blackbody->getTempByDGeom(dgGeom);
-	temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
-	// if temperature is below pyrolysis threshold
-	// Evaluate textures for _MatteMaterial_ material and allocate BRDF
-	Spectrum r = Kd->Evaluate(dgs).Clamp();
-	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+	if(temp > 2500) temp = 2500;
+
+	if (temp < MIN_TEMP_FOR_PYROLYSIS) {
+		// if temperature is below pyrolysis threshold
+		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
+		Spectrum r = Kd->Evaluate(dgs).Clamp();
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+		
+	} else if(temp > MAX_TEMP_TO_BSSRDF) {
+		Spectrum heat = blackbody->getTempSpectrum(temp);
+		heat *= (temp / MAX_TEMP_TO_BSSRDF - 1.0) * 0.7 + 1.0;
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(heat));
+	} else {
+		//use both texture and subsurface
+		
+		float alpha = (temp - MIN_TEMP_FOR_PYROLYSIS)/ (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+
+		// Evaluate textures for _MatteMaterial_ material and allocate BRDF
+		Spectrum r = (1-alpha) * Kd->Evaluate(dgs).Clamp();
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+		if(temp > 5000) temp = 5000.0f;
+
+		float vals[3] = {1.0f, 1.0f, 1.0f};
+		float rgb[3] = {700, 530, 470};
+		Blackbody(rgb, 3, temp, vals);
+		//normalize vals
+		float sum = vals[0] + vals[1] + vals[2];
+		//if(dgGeom.p.x > 0){
+		/*
+		if(temp < MIN_TEMP_FOR_PYROLYSIS+800.0f){
+		sum *= 0.3 + (temp-MIN_TEMP_FOR_PYROLYSIS) / (800.0f) * 0.7f;
+		}
+		*/
+
+		sum *= 0.1 + 1.0 * (MAX_TEMP_TO_BSSRDF - temp) / (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+
+		vals[0] /= sum;
+		vals[1] /= sum;
+		vals[2] /= sum;
+		//}
+		Spectrum rgbsp = alpha * RGBSpectrum::FromRGB(vals);
+
+		bsdf->Add(BSDF_ALLOC(arena, Lambertian)(rgbsp));
+	}
+	
+	
 	return bsdf;
-	/*
-	float vals[3] = {1.0f, 1.0f, 1.0f};
-	float rgb[3] = {700, 530, 470};
-	Blackbody(rgb, 3, temp, vals);
-	vals[1] *= 2.f;
-	bsdf->Add(BSDF_ALLOC(arena, Lambertian)(RGBSpectrum::FromRGB(vals)));
-#if VDB
-	vdb_color(vals[0], vals[1], vals[2]);
-	vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
-#endif
-	return bsdf;
-	*/
+
 }
 
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
@@ -110,23 +143,30 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	// scale temp to normal charcoal burning temperatures
 	//temp = (temp-minTemp)*4000.f/(maxTemp-minTemp);
 
+	if(temp > 5000) temp = 5000.0f;
+
 	float vals[3] = {1.0f, 1.0f, 1.0f};
 	
-	float pyrolysis_thre = 400.0f;
-	if (temp < pyrolysis_thre) 
-		// no pyrolysis, don't even do subsurface scattering
-		return NULL; 
 
+	if (temp >= MAX_TEMP_TO_BSSRDF) 
+		// pyrolysis is occuring at the surface
+		return NULL; 
+	if (temp < MIN_TEMP_FOR_PYROLYSIS) 
+		return NULL; // no pyrolysis
 	
 	float rgb[3] = {700, 530, 470};
 	Blackbody(rgb, 3, temp, vals);
 	//normalize vals
 	float sum = vals[0] + vals[1] + vals[2];
 	//if(dgGeom.p.x > 0){
-	if(temp < pyrolysis_thre+500.0f){
-		sum *= (temp-pyrolysis_thre) / (500.0f);
+	/*
+	if(temp < MIN_TEMP_FOR_PYROLYSIS+800.0f){
+		sum *= 0.3 + (temp-MIN_TEMP_FOR_PYROLYSIS) / (800.0f) * 0.7f;
 	}
-	
+	*/
+
+	sum *= 0.1 + 1.0 * (MAX_TEMP_TO_BSSRDF - temp) / (MAX_TEMP_TO_BSSRDF - MIN_TEMP_FOR_PYROLYSIS);
+
 	vals[0] /= sum;
 	vals[1] /= sum;
 	vals[2] /= sum;
@@ -154,6 +194,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 	RGBSpectrum::
 	bssrdf->mult = Spectrum::FromSampled(wavelengths, vals, 100);
 	*/
+
 #if VDB
 	{
 		float rgb[3];
@@ -162,6 +203,7 @@ BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 		//rgb[1] = vals[1];
 		//rgb[2] = vals[2];
 		vdb_color(rgb[0], rgb[1], rgb[2]);
+		//vdb_color(vals[0], vals[1], vals[2]);
 		vdb_point(dgGeom.p.x, dgGeom.p.y, dgGeom.p.z);
 	}
 #endif

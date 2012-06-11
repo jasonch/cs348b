@@ -32,12 +32,13 @@
 BlackbodyMaterial::BlackbodyMaterial(const char* tempFile, const char* xFile,
 	const char* yFile, const char *zFile) {
 
-		openTempDist("tempdist2");
+		openTempDist(tempFile);
 		openGrid(xFile, gridX);
 		openGrid(yFile, gridY);
 		openGrid(zFile, gridZ);
 
 		getMinMaxTemperatures(minTemp, maxTemp);
+		printf("Min Temp: %.3f, Max Temp: %.3f\n", minTemp, maxTemp);
 }
 
 
@@ -51,7 +52,6 @@ void BlackbodyMaterial::getMinMaxTemperatures(double &minTemp, double &maxTemp) 
 		double temp = getTempdist(i,j,k);
 		if (maxTemp < temp) maxTemp = temp;
 		if (minTemp > temp)	minTemp = temp;
-		//printf("temp: %.3f, Max Temp: %.3f, Min Temp: %.3f\n", temp, maxTemp, minTemp);
 	}}}
 }
 
@@ -103,8 +103,10 @@ void BlackbodyMaterial::openGrid(const char* file, double* grid){
 		}
 		myfile.close();
 	}
-	else std::cout << "Unable to open grid file\n";
-
+	else {
+		std::cout << "Unable to open grid file\n";
+		exit(-1);
+	}
 }
 
 void BlackbodyMaterial::initializeArrays(int nx, int ny, int nz) {
@@ -141,7 +143,10 @@ int BlackbodyMaterial::openTempDist(const char* file){
 
 		}
 		myfile.close();
-	}	else std::cout << "Unable to open file"; 
+	} else {
+		std::cout << "Unable to open file"; 
+		exit(-1);
+	}
 
 	return 0;
 }
